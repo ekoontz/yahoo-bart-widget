@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<widget> 
+  <debug>on</debug> 
+  <window> 
+    <name>main_window</name> 
+    <title>My second Widget</title> 
+    <height>300</height> 
+    <width>300</width> 
+    <visible>true</visible> 
+    <text> 
+      <name>myText</name> 
+      <color>#000000</color> 
+      <size>18</size> 
+      <alignment>left</alignment> 
+      <vOffset>25</vOffset> 
+      <hOffset>2</hOffset> 
+    </text> 
+  </window> 
+  <timer> 
+    <name>timer</name> 
+    <interval>1</interval> 
+    <ticking>true</ticking> 
+    <onTimerFired> 
+ var cpuLoad = system.cpu.activity; 
+ myText.data = cpuLoad + "% CPU load"; 
+ myText.opacity = cpuLoad * 4.55; 
+    </onTimerFired> 
+  </timer> 
+</widget>
