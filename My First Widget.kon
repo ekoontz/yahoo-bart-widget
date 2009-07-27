@@ -16,14 +16,26 @@
       <hOffset>2</hOffset> 
     </text> 
   </window> 
+
+
+
+
   <timer> 
     <name>timer</name> 
     <interval>1</interval> 
     <ticking>true</ticking> 
     <onTimerFired> 
+      <![CDATA[ 
  var cpuLoad = system.cpu.activity; 
  myText.data = cpuLoad + "% CPU load"; 
- myText.opacity = cpuLoad * 4.55; 
+ 
+ if ( cpuLoad < 40 ) { 
+   myText.opacity = 102; 
+ } 
+ else { 
+   myText.opacity = cpuLoad * 2.55; 
+ } 
+ ]]> 
     </onTimerFired> 
   </timer> 
 </widget>
