@@ -1,31 +1,52 @@
-<?xml version="1.0" encoding="UTF-8"?> 
-<widget> 
-  <debug>on</debug> 
-  <window> 
-    <name>main_window</name> 
-    <title>My second Widget</title> 
-    <height>300</height> 
-    <width>300</width> 
-    <visible>true</visible> 
-    <text> 
-      <name>myText</name> 
-      <color>#000000</color> 
-      <size>18</size> 
-      <alignment>left</alignment> 
-      <vOffset>25</vOffset> 
-      <hOffset>2</hOffset> 
-    </text> 
-  </window> 
-
-
-
-
-  <timer> 
-    <name>timer</name> 
-    <interval>1</interval> 
-    <ticking>true</ticking> 
-    <onTimerFired> 
-      <![CDATA[ 
+<?xml version="1.0" encoding="UTF-8"?>
+<widget>
+  <debug>on</debug>
+  <window>
+    <name>main_window</name>
+    <title>My second Widget</title>
+    <height>300</height>
+    <width>300</width>
+    <visible>true</visible>
+    <text>
+      <name>myText</name>
+      <color>#000000</color>
+      <size>18</size>
+      <alignment>left</alignment>
+      <vOffset>25</vOffset>
+      <hOffset>2</hOffset>
+    </text>
+  </window>
+  <preference>
+    <name>textColorPref</name>
+    <title>Text Color:</title>
+    <type>color</type>
+    <defaultValue>#FF0000</defaultValue>
+    <description>Select a color for your text.</description>
+  </preference>
+  <preference>
+    <name>textFontPref</name>
+    <title>Text Font:</title>
+    <type>font</type>
+    <defaultValue>Futura Medium</defaultValue>
+    <description>Select a font to use for your text.</description>
+  </preference>
+  <preference name="timerIntervalPref">
+    <title>Update Interval:</title>
+    <type>slider</type>
+    <minLength>1</minLength>
+    <maxLength>15</maxLength>
+    <ticks>15</ticks>
+    <tickLabel>1</tickLabel>
+    <tickLabel>Seconds</tickLabel>
+    <tickLabel>15</tickLabel>
+    <defaultValue>1</defaultValue>
+    <description>Select how often you want the CPU information to update.</description>
+  </preference>
+  <timer>
+    <name>timer</name>
+    <interval>1</interval>
+    <ticking>true</ticking>
+    <onTimerFired><![CDATA[ 
  var cpuLoad = system.cpu.activity; 
  myText.data = cpuLoad + "% CPU load"; 
  
@@ -35,7 +56,21 @@
  else { 
    myText.opacity = cpuLoad * 2.55; 
  } 
- ]]> 
-    </onTimerFired> 
-  </timer> 
+ ]]></onTimerFired>
+  </timer>
+
+  <action trigger="onLoad"> 
+ function updateBehavior() {
+   myText.font = preferences.textFontPref.value; 
+   myText.color = preferences.textColorPref.value; 
+   timer.interval = preferences.timerIntervalPref.value; 
+ } 
+ updateBehavior(); 
+ </action> 
+
+ <action trigger="onPreferencesChanged"> 
+   updateBehavior(); 
+ </action> 
+
+
 </widget>
