@@ -1,0 +1,178 @@
+<?konfabulator xml-strict="true"?>
+<widget minimumVersion="4.5">
+	<debug>on</debug>
+<!--
+	BART Arrival Times
+	Design & Code:	Eugene Koontz
+		
+	Copyright(C) 2009 Eugene Koontz.
+
+	Licensed under the GNU Public License version 3.0.
+-->
+
+<window name="mainWindow" title="Bart Tracker" width="268" height="209" visible="0">
+
+	<frame id="header" width="268" height="16" style="background-image: url( 'Resources/Window/Header.png' )"/>
+
+	<frame id="bodyBackground" width="268" height="100" vOffset="16" style="background-image: url( 'Resources/Window/Middle.png' ); background-repeat: repeat-y"/>
+
+	<frame id="upperContentContainer" hOffset="12 " vOffset="8" width="244" height="100">
+		<frame id="upperContent" width="488" height="100"/>
+		<frame id="upperContentOrnaments" width="244" height="100" style="background-image: url( 'Resources/Window/Inset Shadow Lower.png' ); background-position: bottom; background-repeat: no-repeat">
+			<image src="Resources/Window/Inset Shadow Upper.png"/>
+			<scrollbar id="upperContentScrollbar" hOffset="230" vOffset="6" width="8" height="36" autoHide="true"/>
+		</frame>
+	</frame>
+
+	<frame id="lastUpdatedBar" hOffset="8" width="252" height="12" style="
+		background-image: url( 'Resources/Window/Last Updated Bar.png' );
+		color: #949596;
+		font-family: Helvetica, Arial;
+		font-weight: bold;
+		font-size: 9px;
+	">
+		<text hOffset="10" vOffset="9" data="Delayed Quote Info" onMouseUp="openURL( 'http://finance.yahoo.com/exchanges' )"/>
+		<text hAlign="right" hOffset="242" vOffset="9"/>
+	</frame>
+	
+	<frame id="lowerContent" hOffset="8" width="252" height="0">
+		<frame id="chartsPanel" width="252" height="197" style="background-image: url( 'Resources/Window/Charts Background.png' )" opacity="0">
+			<frame hOffset="6" width="244" height="119" vOffset="77">
+				<frame/>
+			</frame>
+			<image hOffset="37" vOffset="35" src="Resources/UI/Static Button/Well 7.png"/>
+			<frame id="newsPanel" hOffset="6" width="244" height="31">
+				<frame/>
+			</frame>
+			<image src="Resources/Window/Inset Shadow Upper.png" hOffset="4"/>
+			<image src="Resources/Window/Inset Shadow Lower.png" vAlign="bottom" hOffset="4" vOffset="31"/>
+			<image id="chartsPanelLowerShadow" src="Resources/Window/Inset Shadow Lower.png" vAlign="bottom" hOffset="4"/>
+		</frame>
+
+		<frame id="searchPanel" hOffset="0" width="252" height="197" style="background-image: url( 'Resources/Window/Search Background.png' )" opacity="0"/>
+	</frame>
+
+	<frame id="footer" width="268" height="53" vOffset="133" style="background-image: url( 'Resources/Window/Footer.png' )">
+		<image hOffset="16" vOffset="5" src="Resources/UI/Static Button/Well 3.png"/>
+		<image id="grabber" hOffset="241" vOffset="22" tracking="rectangle" src="Resources/Window/Grabber.png"
+			onMouseDown="grabberDown( )"
+			onMouseDrag="grabberDrag( )"
+			onMouseUp="grabberUp( )"
+		/>
+	</frame>
+
+</window>
+
+<timer name="dragTimer"						interval="0.01"	ticking="false"/>
+<timer name="quoteUpdateTimer"				interval="300"	ticking="false"/>
+<timer name="newsUpdateTimer"				interval="900"	ticking="false"/>
+<timer name="newsPauseTimer"				interval="0.5"	ticking="false"/>
+<timer name="newsTimer"						interval="8"	ticking="false"/>
+<timer name="dockTimer"						interval="14"	ticking="false"/>
+
+<preference
+	name			= "newsAnimation"
+	title			= "Animate news items"
+	type			= "checkbox"
+	defaultValue	= "1"
+/>
+
+<preference
+	name			= "tooltips"
+	title			= "Show tooltips"
+	type			= "checkbox"
+	defaultValue	= "1"
+/>
+
+<preference
+	name			= "precision"
+	title			= "Precision:"
+	description		= "The number of places after the decimal point for number values."
+	type			= "popup"
+	defaultValue	= "2"
+>
+	<option>0</option>
+	<option>1</option>
+	<option>2</option>
+	<option>3</option>
+	<option>4</option>
+</preference>
+
+
+
+<preference	name="windowHeight"				hidden="true"	defaultValue="209"/>
+<preference	name="chartsPanelDisplayed"		hidden="true"	defaultValue="0"/>
+<preference	name="expandedView"				hidden="true"	defaultValue="0"/>
+<preference	name="lastChartRange"			hidden="true"	defaultValue="1d"/>
+<preference	name="lastContentButtonPushed"	hidden="true"	defaultValue=""/>
+<preference	name="lastUpdated"				hidden="true"	defaultValue=""/>
+<preference	name="displayPercentageValues"	hidden="true"	defaultValue="1"/>
+<preference	name="selectedSymbol"			hidden="true"	defaultValue=""/>
+<preference	name="version"					hidden="true"	defaultValue=""/>
+
+<script src = "Scripts/main.js" charset="utf-8"/>
+
+<!-- About box -->
+
+<about-box>
+	<image>Resources/About.png</image>
+	<about-version>
+		<font>Arial</font>
+		<size>10</size>
+		<hOffset>112</hOffset>
+		<vOffset>141</vOffset>
+		<color>#ffffff</color>
+		<shadow>
+			<color>#000000</color>
+			<hOffset>0</hOffset>
+			<vOffset>1</vOffset>
+		</shadow>
+	</about-version>
+	
+	<about-text>
+		<data>Copyright Policy</data>
+		<url>http://hiro-tan.org</url>
+		<font>Arial</font>
+		<size>10</size>
+		<hOffset>112</hOffset>
+		<vOffset>191</vOffset>
+		<color>#ffffff</color>
+		<shadow>
+			<color>#000000</color>
+			<hOffset>0</hOffset>
+			<vOffset>1</vOffset>
+		</shadow>
+	</about-text>
+
+	<about-text>
+		<data>Terms Of Service</data>
+		<url>http://hiro-tan.org</url>
+		<font>Arial</font>
+		<size>10</size>
+		<hOffset>202</hOffset>
+		<vOffset>191</vOffset>
+		<color>#ffffff</color>
+		<shadow>
+			<color>#000000</color>
+			<hOffset>0</hOffset>
+			<vOffset>1</vOffset>
+		</shadow>
+	</about-text>
+
+	<about-text>
+		<data>Privacy Policy</data>
+		<url>http://hiro-tan.org</url>
+		<font>Arial</font>
+		<size>10</size>
+		<hOffset>299</hOffset>
+		<vOffset>191</vOffset>
+		<color>#ffffff</color>
+		<shadow>
+			<color>#000000</color>
+			<hOffset>0</hOffset>
+			<vOffset>1</vOffset>
+		</shadow>
+	</about-text>
+</about-box>
+
+</widget>
