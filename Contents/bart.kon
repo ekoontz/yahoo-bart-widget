@@ -12,10 +12,22 @@
 
 
 
-<window name="bartWindow" title="Bart Tracker" width="268" height="209" visible="1">
-	<frame id="bartcontent" width="268" height="250" style="background-image:url('Resources/Window/Middle.png)">
+<window name="bartWindow" title="Bart Tracker" width="268" height="200" visible="1">
+	<frame id="bartcontent" width="268" height="100" 
+		style="background-image:url('Resources/Window/Middle.png);
+		font-family: Helvetica, Arial;
+		font-weight: bold;
+		font-size: 12px;">
 		<text hOffset="25" vOffset="25" data="BART Tracker" onMouseUp="gothere()"/>
+
+		<frame id="barttable" width="250" height="75" voffset="25" style="color:blue">
+		  <text hOffset="25" vOffset="25" data="table data.."/>
+		</frame>
+
+
 	</frame> 
+	<frame id="bartfooter" width="268" height="50" vOffset="100" style="background-image: url( 'Resources/Window/Footer.png' )"/>
+
 </window>
 
 <script src = "Scripts/bart.js" charset="utf-8"/>

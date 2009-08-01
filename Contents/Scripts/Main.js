@@ -652,7 +652,7 @@ function grabberUp( )
 function initWidgetDB( )
 {
 	financeDB = new SQLite( );
-	financeDB.open( system.widgetDataFolder + "/finance data.db" );
+	financeDB.open( system.widgetDataFolder + "/bart.db" );
 
 	try
 	{
