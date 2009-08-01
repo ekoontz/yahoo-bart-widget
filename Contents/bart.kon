@@ -10,21 +10,20 @@
 	Licensed under the GNU Public License version 3.0.
 -->
 
-<window name="bartWindow" title="Bart Tracker" width="268" height="200" visible="1">
-	<frame id="bartcontent" width="268" height="100" 
+<window name="bartWindow" title="Bart Tracker" width="268" visible="1">
+	<frame id="bartcontent" width="268"
 		style="background-image:url('Resources/Window/Middle.png);
 		font-family: Helvetica, Arial;
 		font-weight: bold;
 		font-size: 12px;">
 		<text hOffset="25" vOffset="25" data="BART Tracker" onMouseUp="about()"/>
 
-		<frame id="barttable" width="250" height="75" voffset="25" style="color:blue">
+		<frame id="barttable" width="250" height="150" voffset="25" style="color:blue">
 		  <text hOffset="25" vOffset="25" data="table data.."/>
 		</frame>
 
 
 	</frame> 
-	<frame id="bartfooter" width="268" height="50" vOffset="100" style="background-image: url( 'Resources/Window/Footer.png' )"/>
 
 </window>
 

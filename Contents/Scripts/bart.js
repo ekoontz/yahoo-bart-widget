@@ -17,6 +17,15 @@ bart_row = new bartRow("Powell station");
 bart_row.vOffset = 45;
 table_data_frame.appendChild(bart_row);
 
+bart_row = new bartRow("16th St station");
+bart_row.vOffset = 60;
+table_data_frame.appendChild(bart_row);
+
+bart_row = new bartRow("MacArthur station");
+bart_row.vOffset = 75;
+table_data_frame.appendChild(bart_row);
+
+
 function initialize() {
 }
 
