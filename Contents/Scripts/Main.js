@@ -652,7 +652,7 @@ function grabberUp( )
 function initWidgetDB( )
 {
 	financeDB = new SQLite( );
-	financeDB.open( system.widgetDataFolder + "/bart.db" );
+	financeDB.open( system.widgetDataFolder + "/finance data.db" );
 
 	try
 	{
@@ -757,6 +757,8 @@ function initWidgetFunctions( )
 
 function initWidgetWindow( )
 {
+
+    log("initWidgetWindow()");
 	lowerContent.height = chartsPanelLowerShadow.vOffset = gExpandedViewHeight * preferences.expandedView.value;
 
 	sizeWindow( preferences.windowHeight.value );
