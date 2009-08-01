@@ -10,14 +10,27 @@
 	Licensed under the GNU Public License version 3.0.
 -->
 
-<window name="mainWindow" title="Bart Tracker" width="268" height="209" visible="0">
 
+
+<window name="bartWindow" title="Bart Tracker" width="268" height="209" visible="1">
+	<frame id="bartcontent" width="268" height="250" style="background-image:url('Resources/Window/Middle.png)">
+		<text hOffset="25" vOffset="25" data="BART Tracker" onMouseUp="gothere()"/>
+	</frame> 
+</window>
+
+<script src = "Scripts/bart.js" charset="utf-8"/>
+
+<window name="mainWindow" title="legacy" width="268" height="209" visible="0">
 	<frame id="header" width="268" height="16" style="background-image: url( 'Resources/Window/Header.png' )"/>
 
 	<frame id="bodyBackground" width="268" height="100" vOffset="16" style="background-image: url( 'Resources/Window/Middle.png' ); background-repeat: repeat-y"/>
 
 	<frame id="upperContentContainer" hOffset="12 " vOffset="8" width="244" height="100">
+
 		<frame id="upperContent" width="488" height="100"/>
+
+
+
 		<frame id="upperContentOrnaments" width="244" height="100" style="background-image: url( 'Resources/Window/Inset Shadow Lower.png' ); background-position: bottom; background-repeat: no-repeat">
 			<image src="Resources/Window/Inset Shadow Upper.png"/>
 			<scrollbar id="upperContentScrollbar" hOffset="230" vOffset="6" width="8" height="36" autoHide="true"/>
