@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+	<name>BART Tracker</name>
+	<version>1.0.2</version>
+	<identifier>com.yahoo.widget.finance</identifier>
+	<image usage="dock" src="Resources/Dock/Icon.png"/>
+	<author name="Eugene Koontz" organization="hiro-tan.org" href="http://hiro-tan.org"/>
+	<copyright>(c) Eugene Koontz</copyright>
+	<description>BART Tracker</description>
+	<platform minVersion="4.5" />
+	<security>
+		<http name="Yahoo!">yahoo.com</http>
+		<http name="BART">bart.gov</http>
+		<filesystem>sandbox</filesystem>
+	</security>
+</metadata>
