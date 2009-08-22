@@ -80,9 +80,8 @@ function initDB(db) {
            of some train. We don't care about D-before for stations that
            are not in this subset.
            
-          So D-before is a transitive relation for we can compute
-          the transitive closure of and choose to either 
-          store in the database, or compute at load-time.              
+           The D-before transitive closure must be re-computed every time
+            the BART data feed is refreshed.
 
 	( See : 
 	    http://www.bart.gov/images/global/system-map23.gif
@@ -98,7 +97,7 @@ function initDB(db) {
 	db.exec("CREATE TABLE IF NOT EXISTS adjacent (station_a TEXT, station_b TEXT)");
 	db.exec("DELETE FROM adjacent");
 	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('EMBR','WOAK')");
-	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('EMBR','MONT')");
+	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('MONT','EMBR')");
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT)");
     }
     catch (e) {
