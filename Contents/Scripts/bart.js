@@ -93,7 +93,9 @@ function initDB(db) {
             is not stated or inferrable.)
 
          */
-	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr TEXT PRIMARY KEY)");
+	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
+	db.exec("DELETE FROM station");
+	db.exec("INSERT INTO station (name,abbr) VALUES ('Embarcadero','EMBR')");
 	db.exec("CREATE TABLE IF NOT EXISTS adjacent (station_a TEXT, station_b TEXT)");
 	db.exec("DELETE FROM adjacent");
 	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('EMBR','WOAK')");
