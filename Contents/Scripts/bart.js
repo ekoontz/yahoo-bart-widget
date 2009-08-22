@@ -90,7 +90,7 @@ function initDB(db) {
             http://www.bart.gov/dev/eta/bart_eta.xml
 
            for XML representation of the graph (although adjacency information
-            is not stated or inferrable.)
+            is not stated or inferrable from this XML.)
 
          */
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
