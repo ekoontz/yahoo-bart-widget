@@ -59,25 +59,97 @@
   <timer name="newsPauseTimer" interval="0.5" ticking="false"/>
   <timer name="newsTimer" interval="8" ticking="false"/>
   <timer name="dockTimer" interval="14" ticking="false"/>
-  <preference name="newsAnimation" title="Animate news items" type="checkbox" defaultValue="1"/>
-  <preference name="tooltips" title="Show tooltips" type="checkbox" defaultValue="1"/>
-  <preference name="precision" title="Precision:" description="The number of places after the decimal point for number values." type="popup" defaultValue="2">
-    <option>0</option>
-    <option>1</option>
-    <option>2</option>
-    <option>3</option>
-    <option>4</option>
+
+  <preference name="start_station" title="Leaving From:" description="The station you're leaving from." type="popup" defaultValue="Powell">
+    <option>16th St. Mission</option>
+    <option>19th St. Oakland</option>
+    <option>24th St. Mission</option>
+    <option>Ashby</option>
+    <option>Balboa Park</option>
+    <option>Bay Fair</option>
+    <option>Castro Valley</option>
+    <option>Civic Center</option>
+    <option>Coliseum/Oakland Airport</option>
+    <option>Colma</option>
+    <option>Concord</option>
+    <option>Daly City</option>
+    <option>Downtown Berkeley</option>
+    <option>Dublin/Pleasanton</option>
+    <option>El Cerrito del Norte</option>
+    <option>El Cerrito Plaza</option>
+    <option>Embarcadero</option>
+    <option>Fremont</option>
+    <option>Fruitvale</option>
+    <option>Glen Park</option>
+    <option>Hayward</option>
+    <option>Lafayette</option>
+    <option>Lake Merritt</option>
+    <option>MacArthur</option>
+    <option>Millbrae</option>
+    <option>Montgomery St.</option>
+    <option>North Berkeley</option>
+    <option>North Concord/Martinez</option>
+    <option>Orinda</option>
+    <option>Pittsburg/Bay Point</option>
+    <option>Pleasant Hill</option>
+    <option>Powell St.</option>
+    <option>Richmond</option>
+    <option>Rockridge</option>
+    <option>San Bruno</option>
+    <option>San Francisco Int'l Airport</option>
+    <option>San Leandro</option>
+    <option>South Hayward</option>
+    <option>South San Francisco</option>
+    <option>Union City</option>
+    <option>Walnut Creek</option>
+    <option>West Oakland</option>
   </preference>
-  <preference name="windowHeight" hidden="true" defaultValue="209"/>
-  <preference name="chartsPanelDisplayed" hidden="true" defaultValue="0"/>
-  <preference name="expandedView" hidden="true" defaultValue="0"/>
-  <preference name="lastChartRange" hidden="true" defaultValue="1d"/>
-  <preference name="lastContentButtonPushed" hidden="true" defaultValue=""/>
-  <preference name="lastUpdated" hidden="true" defaultValue=""/>
-  <preference name="displayPercentageValues" hidden="true" defaultValue="1"/>
-  <preference name="selectedSymbol" hidden="true" defaultValue=""/>
-  <preference name="version" hidden="true" defaultValue=""/>
-  <script src="Scripts/main.js" charset="utf-8"/>
+
+  <preference name="end_station" title="Going To:" description="The station you want to arrive at." type="popup" defaultValue="Ashby">
+    <option>16th St. Mission</option>
+    <option>19th St. Oakland</option>
+    <option>24th St. Mission</option>
+    <option>Ashby</option>
+    <option>Balboa Park</option>
+    <option>Bay Fair</option>
+    <option>Castro Valley</option>
+    <option>Civic Center</option>
+    <option>Coliseum/Oakland Airport</option>
+    <option>Colma</option>
+    <option>Concord</option>
+    <option>Daly City</option>
+    <option>Downtown Berkeley</option>
+    <option>Dublin/Pleasanton</option>
+    <option>El Cerrito del Norte</option>
+    <option>El Cerrito Plaza</option>
+    <option>Embarcadero</option>
+    <option>Fremont</option>
+    <option>Fruitvale</option>
+    <option>Glen Park</option>
+    <option>Hayward</option>
+    <option>Lafayette</option>
+    <option>Lake Merritt</option>
+    <option>MacArthur</option>
+    <option>Millbrae</option>
+    <option>Montgomery St.</option>
+    <option>North Berkeley</option>
+    <option>North Concord/Martinez</option>
+    <option>Orinda</option>
+    <option>Pittsburg/Bay Point</option>
+    <option>Pleasant Hill</option>
+    <option>Powell St.</option>
+    <option>Richmond</option>
+    <option>Rockridge</option>
+    <option>San Bruno</option>
+    <option>San Francisco Int'l Airport</option>
+    <option>San Leandro</option>
+    <option>South Hayward</option>
+    <option>South San Francisco</option>
+    <option>Union City</option>
+    <option>Walnut Creek</option>
+    <option>West Oakland</option>
+  </preference>
+
 <!-- About box -->
   <about-box>
     <image>Resources/About.png</image>
