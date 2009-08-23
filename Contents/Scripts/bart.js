@@ -58,7 +58,7 @@ function initDB() {
             AND A is adjacent to B. (recursive case))
 
           Example 1: Union City is D-before Fremont because:
-              1. there is a Fremont-bound train from South Hayward
+              1. there is a Fremont-bound train from Union City
              AND
               2. Union City is adjacent to Fremont.
 
@@ -107,14 +107,11 @@ function initDB() {
          */
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
 	db.exec("DELETE FROM station");
-	db.exec("CREATE TABLE IF NOT EXISTS adjacent (station_a TEXT, station_b TEXT)");
-	db.exec("DELETE FROM adjacent");
-	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('EMBR','WOAK')");
-	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('MONT','EMBR')");
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT)");
+	db.exec("DELETE FROM d_before");
 
 	/* populate stations from server XML response. */
-	stations = bartEtaDoc.evaluate( "root/station" );
+	stations = bartEtaDoc.evaluate( "/root/station" );
 	for (var i = 0; i < stations.length; i++) {
 	    station = stations.item(i);
 	    station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
@@ -122,6 +119,45 @@ function initDB() {
 	    station_name = station_name.replace(/\'/g,'\'\'');
 	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
 	}
+
+	/* populate d-before relation (base case) */
+	destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
+	for (var i = 0; i < destinations.length; i++) {
+	    destination = destinations.item(i);
+	    station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
+	    destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
+	    log("station: " + station_name + "; destination: " + destination_name);
+	    db.exec("INSERT INTO d_before(from_station,final_destination) " +
+                    "     SELECT station_a.name, station_b.name           " +
+                    "       FROM adjacent                                 " +
+                    " INNER JOIN station station_a                        " +
+                    "         ON station_a.abbr = station_a               " +
+                    " INNER JOIN station station_b                        " +
+                    "         ON station_b.abbr = station_b               " +
+                    "        AND (station_a.name = '"+ station_name + "' OR station_b.name='"+ station_name + "') " +
+                    "        AND (station_a.name = '"+ destination_name + "' OR station_b.name='"+ destination_name + "') ");
+
+	}
+	/* populate d-before relation (recursive case) */
+	db.exec("INSERT INTO d_before (from_station,final_destination) " + 
+                "     SELECT from_station.name,to_station.name " + 
+                "  FROM d_before " +
+           " INNER JOIN station from_station  " +
+"                    ON from_station.name = d_before.from_station " +
+"            INNER JOIN station to_station " +
+"                    ON to_station.abbr = adjacent.station_b " +
+"            INNER JOIN adjacent  " +
+		"                    ON (from_station.abbr = station_a OR from_station.abbr = station_b)");
+
+	db.exec("INSERT INTO d_before (from_station,final_destination) " + 
+                "     SELECT from_station.name,to_station.name " + 
+                "  FROM d_before " +
+           " INNER JOIN station from_station  " +
+"                    ON from_station.name = d_before.from_station " +
+"            INNER JOIN station to_station " +
+"                    ON to_station.abbr = adjacent.station_b " +
+"            INNER JOIN adjacent  " +
+		"                    ON (from_station.abbr = station_a OR from_station.abbr = station_b)");
 
     }
     catch (e) {
