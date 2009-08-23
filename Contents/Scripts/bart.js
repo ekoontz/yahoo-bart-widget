@@ -1,24 +1,36 @@
-log("reading 'bart_eta.xml'");
-var bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
-
-stations = bartEtaDoc.evaluate( "root/station/name" );
-
-log("finished reading 'bart_eta.xml'");
-
-log("opening bart database from file: " + system.widgetDataFolder + "/bart.db");
-bartDB = new SQLite( );
-bartDB.open( system.widgetDataFolder + "/bart.db" );
-initDB(bartDB);
-log("finished reading bart database.");
 
 table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
 var station = "Powell St.";
 
-function initDB(db) {
-    try
-    {
+initDB();
+
+function initDB() {
+    var barEtaDoc;
+
+    log("reading 'bart_eta.xml'");
+    try {
+	bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
+	log("..ok.");
+    }
+    catch(e) {
+	log("exception reading bart_eta.xml: " + e);
+	return;
+    }
+
+    try {
+	log("opening bart database from file: " + system.widgetDataFolder + "/bart.db");
+	db = new SQLite( );
+	db.open( system.widgetDataFolder + "/bart.db" );
+	log("..ok.");
+    }
+    catch (e) {
+	log("exception opening database");
+	return;
+    }
+
+    try {
 	/* Definitions: 
            1. Connection(A,B,D)
            station A is connected to station B 
@@ -95,12 +107,22 @@ function initDB(db) {
          */
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
 	db.exec("DELETE FROM station");
-	db.exec("INSERT INTO station (name,abbr) VALUES ('Embarcadero','EMBR')");
 	db.exec("CREATE TABLE IF NOT EXISTS adjacent (station_a TEXT, station_b TEXT)");
 	db.exec("DELETE FROM adjacent");
 	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('EMBR','WOAK')");
 	db.exec("INSERT INTO adjacent (station_a,station_b) VALUES ('MONT','EMBR')");
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT)");
+
+	/* populate stations from server XML response. */
+	stations = bartEtaDoc.evaluate( "root/station" );
+	for (var i = 0; i < stations.length; i++) {
+	    station = stations.item(i);
+	    station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
+	    station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
+	    station_name = station_name.replace(/\'/g,'\'\'');
+	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+	}
+
     }
     catch (e) {
 	log("could not create tables in bart database.");
