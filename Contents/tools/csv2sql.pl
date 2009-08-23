@@ -7,13 +7,9 @@ my $current = "";
 while(<>) {
     @parts = split(",");
     $current = $parts[3];
-    if ($prev ne "") {
-	if ($prev ne $current) {
-	    print "INSERT INTO tmp_adjacent (station_a,station_b) VALUES ('$prev','$current');\n";
-	}
-	else {
-	    print "WTF: $_";
-	}
+    $index = $parts[4];
+    if (($index ne "1") && ($current ne "stop_id")) {
+	print "INSERT INTO adjacent (station_a,station_b) SELECT '$prev','$current' WHERE '$prev' < '$current';\n";
     }
     $prev = $current;
 }
