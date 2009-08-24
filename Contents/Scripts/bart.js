@@ -107,8 +107,12 @@ function initDB() {
          */
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
 	db.exec("DELETE FROM station");
+
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT)");
 	db.exec("DELETE FROM d_before");
+
+	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
+	db.exec("DELETE FROM destination");
 
 	/* populate stations from server XML response. */
 	stations = bartEtaDoc.evaluate( "/root/station" );
@@ -125,20 +129,43 @@ function initDB() {
 	for (var i = 0; i < destinations.length; i++) {
 	    destination = destinations.item(i);
 	    station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
+	    eta = destination.evaluate("ancestor::eta/estimate/text()").item(0).nodeValue;
 	    destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
+
 	    log("station: " + station_name + "; destination: " + destination_name);
+
+	    log("INSERT INTO destination(station,destination,eta)" +
+                "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
+
+	    db.exec("INSERT INTO destination(station,destination,eta)" +
+                "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
+
+	    /* exactly one of the following INSERT statements will actually do an insert, but 
+               we don't know which for any particular pair, so we have to try both. */
 	    db.exec("INSERT INTO d_before(from_station,final_destination) " +
-                    "     SELECT station_a.name, station_b.name           " +
+                    "     SELECT station_a.abbr, station_b.abbr           " +
                     "       FROM adjacent                                 " +
                     " INNER JOIN station station_a                        " +
                     "         ON station_a.abbr = station_a               " +
                     " INNER JOIN station station_b                        " +
                     "         ON station_b.abbr = station_b               " +
-                    "        AND (station_a.name = '"+ station_name + "' OR station_b.name='"+ station_name + "') " +
-                    "        AND (station_a.name = '"+ destination_name + "' OR station_b.name='"+ destination_name + "') ");
+                    "        AND (station_a.name = '"+ station_name + "') " +
+                    "        AND (station_b.name = '"+ destination_name + "')");
+
+	    db.exec("INSERT INTO d_before(final_destination,from_station) " +
+                    "     SELECT station_a.abbr, station_b.abbr           " +
+                    "       FROM adjacent                                 " +
+                    " INNER JOIN station station_a                        " +
+                    "         ON station_a.abbr = station_a               " +
+                    " INNER JOIN station station_b                        " +
+                    "         ON station_b.abbr = station_b               " +
+                    "        AND (station_b.name = '"+ station_name + "') " +
+                    "        AND (station_a.name = '"+ destination_name + "')");
+
 
 	}
 	/* populate d-before relation (recursive case) */
+	if (false) {
 	db.exec("INSERT INTO d_before (from_station,final_destination) " + 
                 "     SELECT from_station.name,to_station.name " + 
                 "  FROM d_before " +
@@ -158,6 +185,8 @@ function initDB() {
 "                    ON to_station.abbr = adjacent.station_b " +
 "            INNER JOIN adjacent  " +
 		"                    ON (from_station.abbr = station_a OR from_station.abbr = station_b)");
+
+	}
 
     }
     catch (e) {
