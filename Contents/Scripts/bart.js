@@ -4,14 +4,31 @@ table_data_frame = bartWindow.getElementById("barttable");
 var vOffset = 0;
 var station = "Powell St.";
 
+var online = true;
+var bartEtaDoc;
 initDB();
 
 function initDB() {
-    var barEtaDoc;
 
-    log("reading 'bart_eta.xml'");
     try {
-	bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
+	if (online == true) {
+	    log("loading remote 'bart_eta.xml'");
+	    var request = new XMLHttpRequest();
+	    request.onreadystateexchange = myStatusProc;
+	    request.open("GET","http://www.bart.gov/dev/eta/bart_eta.xml",false);
+	    request.send();
+	    if (request.status == 200) {
+		bartEtaDoc = XMLDOM.parse(request.responseXML.toXML());
+	    }
+	    else {
+		log("could not retrieve response from http://www.bart.gov.");
+	    }
+
+	}
+	else {
+	    log("reading local 'bart_eta.xml'");
+	    bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
+	}
 	log("..ok.");
     }
     catch(e) {
@@ -134,15 +151,16 @@ function initDB() {
 
 	    log("station: " + station_name + "; destination: " + destination_name);
 
-	    log("INSERT INTO destination(station,destination,eta)" +
-                "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
-
+	    if (false) {
+		log("INSERT INTO destination(station,destination,eta)" +
+                    "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
+	    }
 	    db.exec("INSERT INTO destination(station,destination,eta)" +
                 "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
 
-	    /* exactly one of the following INSERT statements will actually do an insert, but 
+            /* exactly one of the following INSERT statements will actually do an insert, but 
                we don't know which for any particular pair, so we have to try both. */
-	    db.exec("INSERT INTO d_before(from_station,final_destination) " +
+            db.exec("INSERT INTO d_before(from_station,final_destination) " +
                     "     SELECT station_a.abbr, station_b.abbr           " +
                     "       FROM adjacent                                 " +
                     " INNER JOIN station station_a                        " +
@@ -152,7 +170,7 @@ function initDB() {
                     "        AND (station_a.name = '"+ station_name + "') " +
                     "        AND (station_b.name = '"+ destination_name + "')");
 
-	    db.exec("INSERT INTO d_before(final_destination,from_station) " +
+            db.exec("INSERT INTO d_before(final_destination,from_station) " +
                     "     SELECT station_a.abbr, station_b.abbr           " +
                     "       FROM adjacent                                 " +
                     " INNER JOIN station station_a                        " +
@@ -161,33 +179,56 @@ function initDB() {
                     "         ON station_b.abbr = station_b               " +
                     "        AND (station_b.name = '"+ station_name + "') " +
                     "        AND (station_a.name = '"+ destination_name + "')");
-
-
-	}
-	/* populate d-before relation (recursive case) */
-	if (false) {
-	db.exec("INSERT INTO d_before (from_station,final_destination) " + 
-                "     SELECT from_station.name,to_station.name " + 
-                "  FROM d_before " +
-           " INNER JOIN station from_station  " +
-"                    ON from_station.name = d_before.from_station " +
-"            INNER JOIN station to_station " +
-"                    ON to_station.abbr = adjacent.station_b " +
-"            INNER JOIN adjacent  " +
-		"                    ON (from_station.abbr = station_a OR from_station.abbr = station_b)");
-
-	db.exec("INSERT INTO d_before (from_station,final_destination) " + 
-                "     SELECT from_station.name,to_station.name " + 
-                "  FROM d_before " +
-           " INNER JOIN station from_station  " +
-"                    ON from_station.name = d_before.from_station " +
-"            INNER JOIN station to_station " +
-"                    ON to_station.abbr = adjacent.station_b " +
-"            INNER JOIN adjacent  " +
-		"                    ON (from_station.abbr = station_a OR from_station.abbr = station_b)");
-
+	    
 	}
 
+	/* populate d-before relation (recursive definition) */
+	/* ('recursive' in the sense of the definition of d-before, not the implementation). */
+	/* currently needs (at most) 16 iterations to do the transitive closure. */
+	for(j = 0; j < 16; j++) {
+	    
+	    if ((j % 5) == 0) {
+		log("d_before inference iteration # " + j);
+	    }
+	    
+	    db.exec(""+
+"INSERT INTO d_before (from_station,final_destination) "+
+"     SELECT adjacent.station_b,adj.final_destination "+
+"       FROM adjacent  "+
+" INNER JOIN d_before adj "+
+"         ON (station_a = adj.from_station) "+
+" INNER JOIN station new  "+
+"         ON new.abbr = station_b  "+
+" INNER JOIN station dest  "+
+"         ON dest.abbr = adj.final_destination "+
+" INNER JOIN destination  "+
+"         ON dest.name = destination.destination "+
+"        AND destination.station = new.name "+
+"  LEFT JOIN d_before existing "+
+"         ON existing.from_station = adjacent.station_b "+
+"        AND existing.final_destination = adj.final_destination "+
+"      WHERE existing.from_station IS NULL  "+
+"        AND existing.final_destination IS NULL; ");
+
+	    db.exec(""+
+"INSERT INTO d_before (from_station,final_destination)  "+
+"     SELECT adjacent.station_a,adj.final_destination "+
+"       FROM adjacent  "+
+" INNER JOIN d_before adj "+
+"         ON (station_b = adj.from_station) "+
+" INNER JOIN station new  "+
+"         ON new.abbr = station_a  "+
+" INNER JOIN station dest  "+
+"         ON dest.abbr = adj.final_destination "+
+" INNER JOIN destination  "+
+"         ON dest.name = destination.destination "+
+"        AND destination.station = new.name "+
+"  LEFT JOIN d_before existing "+
+"         ON existing.from_station = adjacent.station_a "+
+"        AND existing.final_destination = adj.final_destination "+
+"      WHERE existing.from_station IS NULL  "+
+		    "        AND existing.final_destination IS NULL; ");
+	}
     }
     catch (e) {
 	log("could not create tables in bart database.");
@@ -195,26 +236,10 @@ function initDB() {
     }
 }
 
-
-function myStatusProc() {
-    log("got here..(myStatusProc()");
-}
-
-    var request = new XMLHttpRequest();
-    request.onreadystateexchange = myStatusProc;
-    request.open("GET","http://www.bart.gov/dev/eta/bart_eta.xml",false);
-    request.send();
-    if (request.status == 200) {
-	arrival_times = XMLDOM.parse(request.responseXML.toXML());
-    }
-    else {
-	log("could not retrieve response from http://www.bart.gov.");
-    }
-
     // 1st leg of journey
     bart_row = new bartStation("Powell to Dublin/Pleasanton");
     table_data_frame.appendChild(bart_row);
-    estimate = arrival_times.evaluate("string(/root/station[name='Powell St.']/eta[destination='Dublin/Pleasanton']/estimate)");
+    estimate = bartEtaDoc.evaluate("string(/root/station[name='Powell St.']/eta[destination='Dublin/Pleasanton']/estimate)");
     bart_row = new bartStation(estimate);
     table_data_frame.appendChild(bart_row);
 
@@ -222,7 +247,7 @@ function myStatusProc() {
     bart_row = new bartStation("MacArthur to Richmond");
     table_data_frame.appendChild(bart_row);
 
-    estimate = arrival_times.evaluate("string(/root/station[name='MacArthur']/eta[destination='Richmond']/estimate)");
+    estimate = bartEtaDoc.evaluate("string(/root/station[name='MacArthur']/eta[destination='Richmond']/estimate)");
     bart_row = new bartStation(estimate);
     table_data_frame.appendChild(bart_row);
 
