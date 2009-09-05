@@ -13,8 +13,8 @@ while(<>) {
 	if ($prev eq "ASBY") {
 	    $prev = "ASHB";
 	}
-	if ($next eq "ASBY") {
-	    $next = "ASHB";
+	if ($current eq "ASBY") {
+	    $current = "ASHB";
 	}
 
 	print "INSERT INTO adjacent (station_a,station_b) SELECT '$prev','$current' WHERE '$prev' < '$current';\n";
