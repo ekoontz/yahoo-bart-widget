@@ -4,7 +4,8 @@ table_data_frame = bartWindow.getElementById("barttable");
 var vOffset = 0;
 var station = "Powell St.";
 
-var online = true;
+//var online = true;
+var online = false;
 var bartEtaDoc;
 initDB();
 
@@ -136,8 +137,14 @@ function initDB() {
 	for (var i = 0; i < stations.length; i++) {
 	    station = stations.item(i);
 	    station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
+
+	    if (station_name == "San Francisco Int'l Airport") {
+		station_name = "SF Airport";
+	    }
+
 	    station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
 	    station_name = station_name.replace(/\'/g,'\'\'');
+
 	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
 	}
 
@@ -160,7 +167,9 @@ function initDB() {
 
             /* exactly one of the following INSERT statements will actually do an insert, but 
                we don't know which for any particular pair, so we have to try both. */
-            db.exec("INSERT INTO d_before(from_station,final_destination) " +
+	    var insert_sql;
+	    
+	    insert_sql = "INSERT INTO d_before(from_station,final_destination) " +
                     "     SELECT station_a.abbr, station_b.abbr           " +
                     "       FROM adjacent                                 " +
                     " INNER JOIN station station_a                        " +
@@ -168,9 +177,13 @@ function initDB() {
                     " INNER JOIN station station_b                        " +
                     "         ON station_b.abbr = station_b               " +
                     "        AND (station_a.name = '"+ station_name + "') " +
-                    "        AND (station_b.name = '"+ destination_name + "')");
+                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
+                    "        AND (station_b.name = '"+ destination_name + "')";
 
-            db.exec("INSERT INTO d_before(final_destination,from_station) " +
+//	    log(insert_sql);
+            db.exec(insert_sql);
+
+	    insert_sql = "INSERT INTO d_before(final_destination,from_station) " +
                     "     SELECT station_a.abbr, station_b.abbr           " +
                     "       FROM adjacent                                 " +
                     " INNER JOIN station station_a                        " +
@@ -178,56 +191,68 @@ function initDB() {
                     " INNER JOIN station station_b                        " +
                     "         ON station_b.abbr = station_b               " +
                     "        AND (station_b.name = '"+ station_name + "') " +
-                    "        AND (station_a.name = '"+ destination_name + "')");
+                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
+                    "        AND (station_a.name = '"+ destination_name + "')";
+
+//	    log(insert_sql);
+            db.exec(insert_sql);	    
+
 	    
 	}
 
 	/* populate d-before relation (recursive definition) */
 	/* ('recursive' in the sense of the definition of d-before, not the implementation). */
 	/* currently needs (at most) 16 iterations to do the transitive closure. */
-	for(j = 0; j < 16; j++) {
+	for(j = 0; j < 10; j++) {
 	    
 	    if ((j % 5) == 0) {
 		log("d_before inference iteration # " + j);
 	    }
 	    
-	    db.exec(""+
-"INSERT INTO d_before (from_station,final_destination) "+
-"     SELECT adjacent.station_b,adj.final_destination "+
-"       FROM adjacent  "+
-" INNER JOIN d_before adj "+
-"         ON (station_a = adj.from_station) "+
-" INNER JOIN station new  "+
-"         ON new.abbr = station_b  "+
-" INNER JOIN station dest  "+
-"         ON dest.abbr = adj.final_destination "+
-" INNER JOIN destination  "+
-"         ON dest.name = destination.destination "+
-"        AND destination.station = new.name "+
-"  LEFT JOIN d_before existing "+
-"         ON existing.from_station = adjacent.station_b "+
-"        AND existing.final_destination = adj.final_destination "+
-"      WHERE existing.from_station IS NULL  "+
-"        AND existing.final_destination IS NULL; ");
+	    var query = "" +
+"INSERT INTO d_before (from_station,final_destination) \n"+
+"     SELECT adjacent.station_b,adj.final_destination \n"+
+"       FROM adjacent  \n"+
+" INNER JOIN d_before adj \n"+
+"         ON (station_a = adj.from_station)\n"+
+" INNER JOIN station new  \n"+
+"         ON new.abbr = station_b  \n"+
+" INNER JOIN station dest  \n"+
+"         ON dest.abbr = adj.final_destination \n"+
+" INNER JOIN destination  \n"+
+"         ON dest.name = destination.destination \n"+
+"        AND destination.station = new.name \n"+
+"  LEFT JOIN d_before existing \n"+
+"         ON existing.from_station = adjacent.station_b \n"+
+"        AND existing.final_destination = adj.final_destination \n"+
+"      WHERE existing.from_station IS NULL  \n"+
+"        AND existing.final_destination IS NULL; \n"+
+"";
+	log(query);
+	db.exec(query);
 
-	    db.exec(""+
-"INSERT INTO d_before (from_station,final_destination)  "+
-"     SELECT adjacent.station_a,adj.final_destination "+
-"       FROM adjacent  "+
-" INNER JOIN d_before adj "+
-"         ON (station_b = adj.from_station) "+
-" INNER JOIN station new  "+
-"         ON new.abbr = station_a  "+
-" INNER JOIN station dest  "+
-"         ON dest.abbr = adj.final_destination "+
-" INNER JOIN destination  "+
-"         ON dest.name = destination.destination "+
-"        AND destination.station = new.name "+
-"  LEFT JOIN d_before existing "+
-"         ON existing.from_station = adjacent.station_a "+
-"        AND existing.final_destination = adj.final_destination "+
-"      WHERE existing.from_station IS NULL  "+
-		    "        AND existing.final_destination IS NULL; ");
+	    query = ""+
+"INSERT INTO d_before (from_station,final_destination)  \n"+
+"     SELECT adjacent.station_a,adj.final_destination \n"+
+"       FROM adjacent  \n"+
+" INNER JOIN d_before adj \n"+
+"         ON (station_b = adj.from_station) \n"+
+" INNER JOIN station new  \n"+
+"         ON new.abbr = station_a  \n"+
+" INNER JOIN station dest  \n"+
+"         ON dest.abbr = adj.final_destination \n"+
+" INNER JOIN destination  \n"+
+"         ON dest.name = destination.destination \n"+
+"        AND destination.station = new.name \n"+
+"  LEFT JOIN d_before existing \n"+
+"         ON existing.from_station = adjacent.station_a \n"+
+"        AND existing.final_destination = adj.final_destination \n"+
+"      WHERE existing.from_station IS NULL  \n"+
+		"        AND existing.final_destination IS NULL; \n"+
+		"";
+	log(query);
+	db.exec(query);
+
 	}
     }
     catch (e) {
