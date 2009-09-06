@@ -2,13 +2,10 @@
 table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
-var from_station = "Glen Park";
-var to_station = "North Berkeley";
 
 var online = true;
 //var online = false;
 var bartEtaDoc;
-initDB();
 
 function initDB() {
 
@@ -268,46 +265,65 @@ function initDB() {
     }
 }
 
-    var final_destination = "Pittsburg/Bay Point";
+    function update_etas() {
+	log("update etas..");
+	
+	reload_etas();
 
+	update_etas_timer.reset();
+    }
+
+
+function reload_etas() {
+
+    initDB();
+
+    var from_station = preferences.start_station.value;
+    var to_station = preferences.end_station.value;
+
+    var transfer_station = "12th St. Oakland City Center";
+    var final_destination_first_leg = "Pittsburg/Bay Point";
+    var final_destination_second_leg = "Richmond";
+    var final_destination;
+
+    // remove old messages from barttable.
+    content_to_remove = table_data_frame.evaluate("frame");
+    for (var i = 0; i < content_to_remove.length; i++) {
+	table_data_frame.removeChild(content_to_remove.item(i));
+    }
+    table_data_frame.home();
+    vOffset = 0;
     // 1st leg of journey
-    bart_row = new bartStationMessage(from_station + " -> " + final_destination);
+    final_destination = final_destination_first_leg;
+    bart_row = new bartStationMessage("From:" + from_station);
+    table_data_frame.appendChild(bart_row);
+    bart_row = new bartStationMessage("Get off at:" + transfer_station);
+    table_data_frame.appendChild(bart_row);
+    bart_row = new bartStationMessage("Via (final dest):" + final_destination);
     table_data_frame.appendChild(bart_row);
     estimate = bartEtaDoc.evaluate("string(/root/station[name='"+from_station+"']/eta[destination='"+final_destination+"']/estimate)");
     bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
 
+    final_destination = final_destination_second_leg;
     // 2nd leg of journey
-    bart_row = new bartStationMessage("12 St. (Oakland) to " + to_station);
+    bart_row = new bartStationMessage("From:" + transfer_station);
+    table_data_frame.appendChild(bart_row);
+    bart_row = new bartStationMessage("Get off at:" + to_station);
+    table_data_frame.appendChild(bart_row);
+    bart_row = new bartStationMessage("Via (final dest):" + final_destination);
     table_data_frame.appendChild(bart_row);
 
-    estimate = bartEtaDoc.evaluate("string(/root/station[name='12th St. Oakland City Center']/eta[destination='Richmond']/estimate)");
+    estimate = bartEtaDoc.evaluate("string(/root/station[name='"+transfer_station+"']/eta[destination='"+final_destination+"']/estimate)");
     bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
 
-//refreshPrefs.onTimerFired = loadStations();
 
-function loadStations() {
-/*    station_dropdown = preferences.leaving_from;
-    log("loadStations()" + station_dropdown);
-    foo = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
-    bar = foo.getElementById("foo");
-    baz = foo.createElement("option");
-    log(baz);
-    log(preferences.leaving_from);
-    test = widget.importNode(baz);
-//    preferences.leaving_from.importNode(baz);
-    refreshPrefs.interval = 10;
-*/
-}
-
-function initialize() {
+    
 }
 
 function about() {
-    loadStations();
     alert("By Eugene Koontz (ekoontz@hiro-tan.org)");
-
 }
 
 function bartStationMessage( text ) {
@@ -318,7 +334,7 @@ function bartStationMessage( text ) {
     obj.change = 0;
     obj.changePercent = 0;
 
-    obj.width = 200;
+    obj.width = 450;
     obj.height = 28;
     obj.hOffset = 30;
     obj.vOffset = vOffset;
