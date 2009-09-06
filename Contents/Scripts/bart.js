@@ -2,10 +2,11 @@
 table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
-var station = "Powell St.";
+var from_station = "Glen Park";
+var to_station = "North Berkeley";
 
-//var online = true;
-var online = false;
+var online = true;
+//var online = false;
 var bartEtaDoc;
 initDB();
 
@@ -15,11 +16,11 @@ function initDB() {
 	if (online == true) {
 	    log("loading remote 'bart_eta.xml'");
 	    var request = new XMLHttpRequest();
-	    request.onreadystateexchange = myStatusProc;
 	    request.open("GET","http://www.bart.gov/dev/eta/bart_eta.xml",false);
 	    request.send();
+
 	    if (request.status == 200) {
-		bartEtaDoc = XMLDOM.parse(request.responseXML.toXML());
+		bartEtaDoc = XMLDOM.parse(request.responseXML.toXML());			
 	    }
 	    else {
 		log("could not retrieve response from http://www.bart.gov.");
@@ -153,15 +154,21 @@ function initDB() {
 	for (var i = 0; i < destinations.length; i++) {
 	    destination = destinations.item(i);
 	    station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
+
+	    if (station_name == "San Francisco Int''l Airport") {
+		station_name = "SF Airport";
+	    }
+
 	    eta = destination.evaluate("ancestor::eta/estimate/text()").item(0).nodeValue;
 	    destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
 
-	    log("station: " + station_name + "; destination: " + destination_name);
+//	    log("station: " + station_name + "; destination: " + destination_name);
 
 	    if (false) {
 		log("INSERT INTO destination(station,destination,eta)" +
                     "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
 	    }
+
 	    db.exec("INSERT INTO destination(station,destination,eta)" +
                 "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
 
@@ -177,7 +184,7 @@ function initDB() {
                     " INNER JOIN station station_b                        " +
                     "         ON station_b.abbr = station_b               " +
                     "        AND (station_a.name = '"+ station_name + "') " +
-                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
+//                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
                     "        AND (station_b.name = '"+ destination_name + "')";
 
 //	    log(insert_sql);
@@ -191,7 +198,7 @@ function initDB() {
                     " INNER JOIN station station_b                        " +
                     "         ON station_b.abbr = station_b               " +
                     "        AND (station_b.name = '"+ station_name + "') " +
-                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
+//                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
                     "        AND (station_a.name = '"+ destination_name + "')";
 
 //	    log(insert_sql);
@@ -203,7 +210,7 @@ function initDB() {
 	/* populate d-before relation (recursive definition) */
 	/* ('recursive' in the sense of the definition of d-before, not the implementation). */
 	/* currently needs (at most) 16 iterations to do the transitive closure. */
-	for(j = 0; j < 10; j++) {
+	for(j = 0; j < 16; j++) {
 	    
 	    if ((j % 5) == 0) {
 		log("d_before inference iteration # " + j);
@@ -228,7 +235,7 @@ function initDB() {
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL; \n"+
 "";
-	log(query);
+//	log(query);
 	db.exec(query);
 
 	    query = ""+
@@ -250,7 +257,7 @@ function initDB() {
 "      WHERE existing.from_station IS NULL  \n"+
 		"        AND existing.final_destination IS NULL; \n"+
 		"";
-	log(query);
+//	log(query);
 	db.exec(query);
 
 	}
@@ -261,19 +268,21 @@ function initDB() {
     }
 }
 
+    var final_destination = "Pittsburg/Bay Point";
+
     // 1st leg of journey
-    bart_row = new bartStation("Powell to Dublin/Pleasanton");
+    bart_row = new bartStationMessage(from_station + " -> " + final_destination);
     table_data_frame.appendChild(bart_row);
-    estimate = bartEtaDoc.evaluate("string(/root/station[name='Powell St.']/eta[destination='Dublin/Pleasanton']/estimate)");
-    bart_row = new bartStation(estimate);
+    estimate = bartEtaDoc.evaluate("string(/root/station[name='"+from_station+"']/eta[destination='"+final_destination+"']/estimate)");
+    bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
 
     // 2nd leg of journey
-    bart_row = new bartStation("MacArthur to Richmond");
+    bart_row = new bartStationMessage("12 St. (Oakland) to " + to_station);
     table_data_frame.appendChild(bart_row);
 
-    estimate = bartEtaDoc.evaluate("string(/root/station[name='MacArthur']/eta[destination='Richmond']/estimate)");
-    bart_row = new bartStation(estimate);
+    estimate = bartEtaDoc.evaluate("string(/root/station[name='12th St. Oakland City Center']/eta[destination='Richmond']/estimate)");
+    bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
 
 //refreshPrefs.onTimerFired = loadStations();
@@ -301,7 +310,7 @@ function about() {
 
 }
 
-function bartStation( text ) {
+function bartStationMessage( text ) {
     var obj = new Frame( );
     
     obj.symbol = null;
