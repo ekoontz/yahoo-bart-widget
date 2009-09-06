@@ -46,8 +46,7 @@ function initDB() {
 	return;
     }
 
-    try {
-	/* Definitions: 
+    /* Definitions: 
            1. Connection(A,B,D)
            station A is connected to station B 
            by a D-bound train (Connection(A,B,D)
@@ -121,97 +120,104 @@ function initDB() {
             is not stated or inferrable from this XML.)
 
          */
+
+    try {
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
 	db.exec("DELETE FROM station");
-
+	
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT)");
 	db.exec("DELETE FROM d_before");
-
+	
 	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
 	db.exec("DELETE FROM destination");
+    }
+    catch (e) {
+	log("could not create tables in bart database.");
+	log(e);
+    }
 
-	/* populate stations from server XML response. */
-	stations = bartEtaDoc.evaluate( "/root/station" );
-	for (var i = 0; i < stations.length; i++) {
-	    station = stations.item(i);
-	    station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
-
-	    if (station_name == "San Francisco Int'l Airport") {
-		station_name = "SF Airport";
-	    }
-
-	    station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
-	    station_name = station_name.replace(/\'/g,'\'\'');
-
-	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+    /* populate stations from server XML response. */
+    stations = bartEtaDoc.evaluate( "/root/station" );
+    for (var i = 0; i < stations.length; i++) {
+	station = stations.item(i);
+	station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
+	
+	if (station_name == "San Francisco Int'l Airport") {
+	    station_name = "SF Airport";
 	}
+	
+	station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
+	station_name = station_name.replace(/\'/g,'\'\'');
+	
+	db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+    }
 
-	/* populate d-before relation (base case) */
-	destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
-	for (var i = 0; i < destinations.length; i++) {
-	    destination = destinations.item(i);
-	    station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
-
-	    if (station_name == "San Francisco Int''l Airport") {
-		station_name = "SF Airport";
-	    }
-
-	    eta = destination.evaluate("ancestor::eta/estimate/text()").item(0).nodeValue;
-	    destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
-
-//	    log("station: " + station_name + "; destination: " + destination_name);
-
-	    if (false) {
-		log("INSERT INTO destination(station,destination,eta)" +
-                    "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
-	    }
-
-	    db.exec("INSERT INTO destination(station,destination,eta)" +
+    /* populate d-before relation (base case) */
+    destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
+    for (var i = 0; i < destinations.length; i++) {
+	destination = destinations.item(i);
+	station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
+	
+	if (station_name == "San Francisco Int''l Airport") {
+	    station_name = "SF Airport";
+	}
+	
+	eta = destination.evaluate("ancestor::eta/estimate/text()").item(0).nodeValue;
+	destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
+	
+	//	    log("station: " + station_name + "; destination: " + destination_name);
+	
+	if (false) {
+	    log("INSERT INTO destination(station,destination,eta)" +
                 "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
-
-            /* exactly one of the following INSERT statements will actually do an insert, but 
-               we don't know which for any particular pair, so we have to try both. */
-	    var insert_sql;
-	    
-	    insert_sql = "INSERT INTO d_before(from_station,final_destination) " +
-                    "     SELECT station_a.abbr, station_b.abbr           " +
-                    "       FROM adjacent                                 " +
-                    " INNER JOIN station station_a                        " +
-                    "         ON station_a.abbr = station_a               " +
-                    " INNER JOIN station station_b                        " +
-                    "         ON station_b.abbr = station_b               " +
-                    "        AND (station_a.name = '"+ station_name + "') " +
-//                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
-                    "        AND (station_b.name = '"+ destination_name + "')";
-
-//	    log(insert_sql);
-            db.exec(insert_sql);
-
-	    insert_sql = "INSERT INTO d_before(final_destination,from_station) " +
-                    "     SELECT station_a.abbr, station_b.abbr           " +
-                    "       FROM adjacent                                 " +
-                    " INNER JOIN station station_a                        " +
-                    "         ON station_a.abbr = station_a               " +
-                    " INNER JOIN station station_b                        " +
-                    "         ON station_b.abbr = station_b               " +
-                    "        AND (station_b.name = '"+ station_name + "') " +
-//                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
-                    "        AND (station_a.name = '"+ destination_name + "')";
-
-//	    log(insert_sql);
-            db.exec(insert_sql);	    
-
-	    
 	}
+	
+	db.exec("INSERT INTO destination(station,destination,eta)" +
+                "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
+	
+        /* exactly one of the following INSERT statements will actually do an insert, but 
+               we don't know which for any particular pair, so we have to try both. */
+	var insert_sql;
+	
+	insert_sql = "INSERT INTO d_before(from_station,final_destination) " +
+            "     SELECT station_a.abbr, station_b.abbr           " +
+            "       FROM adjacent                                 " +
+            " INNER JOIN station station_a                        " +
+            "         ON station_a.abbr = station_a               " +
+            " INNER JOIN station station_b                        " +
+            "         ON station_b.abbr = station_b               " +
+            "        AND (station_a.name = '"+ station_name + "') " +
+	    //                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
+            "        AND (station_b.name = '"+ destination_name + "')";
+	
+	log(insert_sql);
+        db.exec(insert_sql);
+	
+	insert_sql = "INSERT INTO d_before(final_destination,from_station) " +
+            "     SELECT station_a.abbr, station_b.abbr           " +
+            "       FROM adjacent                                 " +
+            " INNER JOIN station station_a                        " +
+            "         ON station_a.abbr = station_a               " +
+            " INNER JOIN station station_b                        " +
+            "         ON station_b.abbr = station_b               " +
+            "        AND (station_b.name = '"+ station_name + "') " +
+	    //                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
+            "        AND (station_a.name = '"+ destination_name + "')";
+	
+	log(insert_sql);
+        db.exec(insert_sql);	    
+	
+    }
 
 	/* populate d-before relation (recursive definition) */
 	/* ('recursive' in the sense of the definition of d-before, not the implementation). */
 	/* currently needs (at most) 16 iterations to do the transitive closure. */
-	for(j = 0; j < 16; j++) {
-	    
-	    if ((j % 5) == 0) {
-		log("d_before inference iteration # " + j);
-	    }
+	var existing_count = 0;
+	var j = 0;
+	var new_count = db.exec("SELECT count(*) FROM d_before()");
+//	do {
+	for(j = 0; j < 17; j++) {
+	    log("d_before inference iteration # " + j + " count: " + new_count);
 	    
 	    var query = "" +
 "INSERT INTO d_before (from_station,final_destination) \n"+
@@ -232,7 +238,7 @@ function initDB() {
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL; \n"+
 "";
-//	log(query);
+	log(query);
 	db.exec(query);
 
 	    query = ""+
@@ -255,14 +261,10 @@ function initDB() {
 		"        AND existing.final_destination IS NULL; \n"+
 		"";
 //	log(query);
-	db.exec(query);
+	    db.exec(query);
 
 	}
-    }
-    catch (e) {
-	log("could not create tables in bart database.");
-	log(e);
-    }
+	// while (existing_count < new_count);
 }
 
     function update_etas() {
