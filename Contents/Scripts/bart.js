@@ -149,8 +149,15 @@ function initDB() {
 	station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
 	station_name = station_name.replace(/\'/g,'\'\'');
 	
-	db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+	try {
+	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+	}
+	catch(e) {
+	    log("error: could not insert station:" + e);
+	}
     }
+
+    log("doing initial case d_before()");
 
     /* populate d-before relation (base case) */
     destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
@@ -172,8 +179,13 @@ function initDB() {
                 "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
 	}
 	
-	db.exec("INSERT INTO destination(station,destination,eta)" +
-                "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
+	try {
+	    db.exec("INSERT INTO destination(station,destination,eta)" +
+                    "VALUES ('" + station_name + "' , '" + destination_name + "' , '" + eta + "')");
+	}
+	catch(e) {
+	    log("error: could not insert destination:" + e);
+	}
 	
         /* exactly one of the following INSERT statements will actually do an insert, but 
                we don't know which for any particular pair, so we have to try both. */
@@ -190,8 +202,13 @@ function initDB() {
 	    //                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
             "        AND (station_b.name = '"+ destination_name + "')";
 	
-	log(insert_sql);
-        db.exec(insert_sql);
+//	log(insert_sql);
+	try {
+            db.exec(insert_sql);
+	}
+	catch(e) {
+	    log("error: could not insert d_before:" + e);
+	}
 	
 	insert_sql = "INSERT INTO d_before(final_destination,from_station) " +
             "     SELECT station_a.abbr, station_b.abbr           " +
@@ -204,19 +221,27 @@ function initDB() {
 	    //                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
             "        AND (station_a.name = '"+ destination_name + "')";
 	
-	log(insert_sql);
-        db.exec(insert_sql);	    
+//	log(insert_sql);
+	try {
+            db.exec(insert_sql);
+	}
+	catch(e) {
+	    log("error: could not insert d_before:" + e);
+	}
 	
     }
 
-	/* populate d-before relation (recursive definition) */
-	/* ('recursive' in the sense of the definition of d-before, not the implementation). */
-	/* currently needs (at most) 16 iterations to do the transitive closure. */
-	var existing_count = 0;
-	var j = 0;
-	var new_count = db.exec("SELECT count(*) FROM d_before()");
-//	do {
-	for(j = 0; j < 17; j++) {
+    log("DONE doing initial case d_before()");
+
+    /* populate d-before relation (recursive definition) */
+    /* ('recursive' in the sense of the definition of d-before, not the implementation). */
+    /* currently needs (at most) 16 iterations to do the transitive closure. */
+    var existing_count = 0;
+    var j = 0;
+    var new_count = db.exec("SELECT count(*) FROM d_before;");
+    //	do {
+    log("doing recursive case d_before()");
+    for(j = 0; j < 17; j++) {
 	    log("d_before inference iteration # " + j + " count: " + new_count);
 	    
 	    var query = "" +
@@ -238,8 +263,13 @@ function initDB() {
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL; \n"+
 "";
-	log(query);
-	db.exec(query);
+
+	    try {
+		db.exec(query);
+	    }
+	    catch(e) {
+		log("error: could not insert d_before:" + e);
+	    }
 
 	    query = ""+
 "INSERT INTO d_before (from_station,final_destination)  \n"+
@@ -261,7 +291,13 @@ function initDB() {
 		"        AND existing.final_destination IS NULL; \n"+
 		"";
 //	log(query);
-	    db.exec(query);
+
+	    try {
+		db.exec(query);
+	    }
+	    catch(e) {
+		log("error: could not insert d_before:" + e);
+	    }
 
 	}
 	// while (existing_count < new_count);
