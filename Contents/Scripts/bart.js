@@ -202,7 +202,6 @@ function initDB() {
 	    //                    "        AND (station_b.name = '"+ "Richmond"   + "') " +
             "        AND (station_b.name = '"+ destination_name + "')";
 	
-//	log(insert_sql);
 	try {
             db.exec(insert_sql);
 	}
@@ -221,7 +220,6 @@ function initDB() {
 	    //                    "        AND (station_a.name = '"+ "Richmond"   + "') " +
             "        AND (station_a.name = '"+ destination_name + "')";
 	
-//	log(insert_sql);
 	try {
             db.exec(insert_sql);
 	}
@@ -289,7 +287,6 @@ function initDB() {
 "      WHERE existing.from_station IS NULL  \n"+
 		"        AND existing.final_destination IS NULL; \n"+
 		"";
-//	log(query);
 
 	try {
 	    db.exec(query);
