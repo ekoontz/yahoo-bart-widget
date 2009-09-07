@@ -300,7 +300,7 @@ function initDB() {
 	    
 	var query_a = "" +
 "INSERT INTO d_before (from_station,final_destination,distance,color) \n"+
-"     SELECT adjacent.station_b,adj.final_destination,min(adj.distance + 1),adj.color\n"+
+"     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1),adj.color\n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_a = adj.from_station)\n"+
@@ -316,7 +316,6 @@ function initDB() {
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL \n"+
-"   GROUP BY adjacent.station_b,adj.final_destination; \n"
 "";
 
 	// <debug support>
@@ -326,7 +325,6 @@ function initDB() {
 	    break;
 	}
 	// </debug support>
-
 	try {
 	    db.exec(query_a);
 	}
@@ -336,7 +334,7 @@ function initDB() {
 
 	query_b = ""+
 "INSERT INTO d_before (from_station,final_destination,distance,color)  \n"+
-"     SELECT adjacent.station_a,adj.final_destination,min(adj.distance + 1),adj.color\n"+
+"     SELECT adjacent.station_a,adj.final_destination,adj.distance + 1,adj.color\n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_b = adj.from_station) \n"+
@@ -352,7 +350,6 @@ function initDB() {
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL \n"+
-"   GROUP BY adjacent.station_a,adj.final_destination; \n"
 		"";
 
 	// <debug support>
