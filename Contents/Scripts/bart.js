@@ -122,14 +122,14 @@ function initDB() {
          */
 
     try {
-	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
-	db.exec("DELETE FROM station");
+	db.exec("DROP TABLE IF EXISTS station;");
+	db.exec("CREATE TABLE station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
 	
-	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT)");
-	db.exec("DELETE FROM d_before");
+	db.exec("DROP TABLE IF EXISTS d_before");
+	db.exec("CREATE TABLE d_before (from_station TEXT,final_destination TEXT, distance INTEGER)");
 	
-	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
-	db.exec("DELETE FROM destination");
+	db.exec("DROP TABLE IF EXISTS destination");
+	db.exec("CREATE TABLE destination (station TEXT,destination TEXT, eta TEXT)");
     }
     catch (e) {
 	log("could not create tables in bart database.");
@@ -191,8 +191,8 @@ function initDB() {
                we don't know which for any particular pair, so we have to try both. */
 	var insert_sql;
 	
-	insert_sql = "INSERT INTO d_before(from_station,final_destination) " +
-            "     SELECT station_a.abbr, station_b.abbr           " +
+	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
+            "     SELECT station_a.abbr, station_b.abbr,1         " +
             "       FROM adjacent                                 " +
             " INNER JOIN station station_a                        " +
             "         ON station_a.abbr = station_a               " +
@@ -209,8 +209,8 @@ function initDB() {
 	    log("error: could not insert d_before:" + e);
 	}
 	
-	insert_sql = "INSERT INTO d_before(final_destination,from_station) " +
-            "     SELECT station_a.abbr, station_b.abbr           " +
+	insert_sql = "INSERT INTO d_before(final_destination,from_station,distance) " +
+            "     SELECT station_a.abbr, station_b.abbr,1         " +
             "       FROM adjacent                                 " +
             " INNER JOIN station station_a                        " +
             "         ON station_a.abbr = station_a               " +
@@ -233,17 +233,19 @@ function initDB() {
     /* ('recursive' in the sense of the definition of d-before, not the implementation). */
     /* currently needs (at most) 16 iterations to do the transitive closure. */
     var new_count = 0;
+    var iteration = 0;
 
     log("doing recursive case d_before()");
     do {
+
 	var existing_count = new_count;
 	var new_count_q = db.query("SELECT count(*) AS ct FROM d_before;");
 	var new_count_row = new_count_q.getRow();
 	new_count = new_count_row['ct'];
 	    
-	var query = "" +
-"INSERT INTO d_before (from_station,final_destination) \n"+
-"     SELECT adjacent.station_b,adj.final_destination \n"+
+	var query_a = "" +
+"INSERT INTO d_before (from_station,final_destination,distance) \n"+
+"     SELECT adjacent.station_b,adj.final_destination,min(adj.distance + 1) \n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_a = adj.from_station)\n"+
@@ -258,19 +260,13 @@ function initDB() {
 "         ON existing.from_station = adjacent.station_b \n"+
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
-"        AND existing.final_destination IS NULL; \n"+
+"        AND existing.final_destination IS NULL \n"+
+"   GROUP BY adjacent.station_b,adj.final_destination; \n"
 "";
-
-	try {
-	    db.exec(query);
-	}
-	catch(e) {
-	    log("error: could not insert d_before:" + e);
-	}
 	
-	query = ""+
-"INSERT INTO d_before (from_station,final_destination)  \n"+
-"     SELECT adjacent.station_a,adj.final_destination \n"+
+	query_b = ""+
+"INSERT INTO d_before (from_station,final_destination,distance)  \n"+
+"     SELECT adjacent.station_a,adj.final_destination,min(adj.distance + 1) \n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_b = adj.from_station) \n"+
@@ -285,15 +281,32 @@ function initDB() {
 "         ON existing.from_station = adjacent.station_a \n"+
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
-		"        AND existing.final_destination IS NULL; \n"+
+"        AND existing.final_destination IS NULL \n"+
+"   GROUP BY adjacent.station_a,adj.final_destination; \n"
 		"";
 
+
+	iteration++;
+	if (iteration == 50) {
+	    log(query_a);
+	    log(query_b);
+	    break;
+	}
+
 	try {
-	    db.exec(query);
+	    db.exec(query_a);
 	}
 	catch(e) {
 	    log("error: could not insert d_before:" + e);
 	}
+
+	try {
+	    db.exec(query_b);
+	}
+	catch(e) {
+	    log("error: could not insert d_before:" + e);
+	}
+
 	
     } while (existing_count < new_count);
 
@@ -328,13 +341,24 @@ function reload_etas() {
     }
     table_data_frame.home();
     vOffset = 0;
+
+    /* SELECT *,A.distance+B.distance+C.distance+D.distance 
+         FROM d_before A 
+   INNER JOIN d_before B ON (a.final_destination = b.final_destination) 
+   INNER JOIN d_before C ON (b.from_station = c.from_station) 
+   INNER JOIN d_before D ON (c.final_destination = d.final_destination) 
+        WHERE a.from_station='POWL' AND d.from_station='ASHB';
+
+POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
+*/
+
     // 1st leg of journey
     final_destination = final_destination_first_leg;
     bart_row = new bartStationMessage("From:" + from_station);
     table_data_frame.appendChild(bart_row);
     bart_row = new bartStationMessage("Get off at:" + transfer_station);
     table_data_frame.appendChild(bart_row);
-    bart_row = new bartStationMessage("Via (final dest):" + final_destination);
+    bart_row = new bartStationMessage("On " + final_destination + " train");
     table_data_frame.appendChild(bart_row);
     estimate = bartEtaDoc.evaluate("string(/root/station[name='"+from_station+"']/eta[destination='"+final_destination+"']/estimate)");
     bart_row = new bartStationMessage(estimate);
@@ -346,14 +370,12 @@ function reload_etas() {
     table_data_frame.appendChild(bart_row);
     bart_row = new bartStationMessage("Get off at:" + to_station);
     table_data_frame.appendChild(bart_row);
-    bart_row = new bartStationMessage("Via (final dest):" + final_destination);
+    bart_row = new bartStationMessage("On " + final_destination + " train");
     table_data_frame.appendChild(bart_row);
 
     estimate = bartEtaDoc.evaluate("string(/root/station[name='"+transfer_station+"']/eta[destination='"+final_destination+"']/estimate)");
     bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
-
-
     
 }
 
