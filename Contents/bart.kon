@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <?konfabulator xml-strict="true"?>
 <widget minimumVersion="4.5">
-  <debug>on</debug>
+  <settings>
+    <setting name="debug" value="verbose"/>
+  </settings>
 
   <action trigger="onPreferencesChanged">
     reload_etas();
@@ -30,7 +32,7 @@
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
 
-  <timer name="update_etas_timer" ontimerFired="update_etas()" interval="10" ticking="true"/>
+  <timer name="update_etas_timer" ontimerFired="update_etas()" interval="300" ticking="true"/>
 
   <preference name="start_station" title="Leaving From:" description="The station you're leaving from." type="popup" defaultValue="Glen Park">
     <option>12th St. Oakland City Center</option>
