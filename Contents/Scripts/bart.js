@@ -231,20 +231,19 @@ function initDB() {
 	
     }
 
-    log("DONE doing initial case d_before()");
-
     /* populate d-before relation (recursive definition) */
     /* ('recursive' in the sense of the definition of d-before, not the implementation). */
     /* currently needs (at most) 16 iterations to do the transitive closure. */
-    var existing_count = 0;
-    var j = 0;
-    var new_count = db.exec("SELECT count(*) FROM d_before;");
-    //	do {
+    var new_count = 0;
+
     log("doing recursive case d_before()");
-    for(j = 0; j < 17; j++) {
-	    log("d_before inference iteration # " + j + " count: " + new_count);
+    do {
+	var existing_count = new_count;
+	var new_count_q = db.query("SELECT count(*) AS ct FROM d_before;");
+	var new_count_row = new_count_q.getRow();
+	new_count = new_count_row['ct'];
 	    
-	    var query = "" +
+	var query = "" +
 "INSERT INTO d_before (from_station,final_destination) \n"+
 "     SELECT adjacent.station_b,adj.final_destination \n"+
 "       FROM adjacent  \n"+
@@ -264,14 +263,14 @@ function initDB() {
 "        AND existing.final_destination IS NULL; \n"+
 "";
 
-	    try {
-		db.exec(query);
-	    }
-	    catch(e) {
-		log("error: could not insert d_before:" + e);
-	    }
-
-	    query = ""+
+	try {
+	    db.exec(query);
+	}
+	catch(e) {
+	    log("error: could not insert d_before:" + e);
+	}
+	
+	query = ""+
 "INSERT INTO d_before (from_station,final_destination)  \n"+
 "     SELECT adjacent.station_a,adj.final_destination \n"+
 "       FROM adjacent  \n"+
@@ -292,22 +291,23 @@ function initDB() {
 		"";
 //	log(query);
 
-	    try {
-		db.exec(query);
-	    }
-	    catch(e) {
-		log("error: could not insert d_before:" + e);
-	    }
-
+	try {
+	    db.exec(query);
 	}
-	// while (existing_count < new_count);
+	catch(e) {
+	    log("error: could not insert d_before:" + e);
+	}
+	
+    } while (existing_count < new_count);
+
+    log("done with recursive case d_before()");
 }
 
     function update_etas() {
 	log("update etas..");
 	
 	reload_etas();
-
+	
 	update_etas_timer.reset();
     }
 
