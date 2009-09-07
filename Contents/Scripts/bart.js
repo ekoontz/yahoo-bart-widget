@@ -191,63 +191,7 @@ function initDB() {
                we don't know which for any particular pair, so we have to try both. */
 	var insert_sql;
 
-	var color = "(undef)";
-
-	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance,color) " +
-            "     SELECT station_a.abbr, station_b.abbr,1,color   " +
-            "       FROM adjacent                                 " +
-            " INNER JOIN station station_a                        " +
-            "         ON station_a.abbr = station_a               " +
-            " INNER JOIN station station_b                        " +
-            "         ON station_b.abbr = station_b               " +
-            "        AND (station_a.name = '"+ station_name + "') " +
-            "        AND (station_b.name = '"+ destination_name + "')" +
-            " INNER JOIN (SELECT 'red' AS color,'DALY' AS fd " + 
-            "                 UNION " + 
-            "             SELECT 'blue' AS color,'DALY' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'green' AS color,'DALY' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'red' AS color,'MLBR' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'blue' AS color,'MLBR' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'red' AS color,'RICH' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'orange' AS color,'RICH' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'orange' AS color,'FRMT' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'green' AS color,'FRMT' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'yellow' AS color,'PITT' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'blue' AS color,'DUBL' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'yellow' AS color,'SFIA' AS fd " +
-            "            ) " +
-            "         AS color " +
-            "         ON (station_b.abbr = fd)";
-
-	try {
-            db.exec(insert_sql);
-	}
-	catch(e) {
-	    log("error: could not insert d_before(1):" + e);
-	    log(insert_sql);
-	    break;
-	}
-	
-	insert_sql = "INSERT INTO d_before(final_destination,from_station,distance,color) " +
-            "     SELECT station_a.abbr, station_b.abbr,1,color   " + 
-            "       FROM adjacent                                 " +
-            " INNER JOIN station station_a                        " +
-            "         ON station_a.abbr = station_a               " +
-            " INNER JOIN station station_b                        " +
-            "         ON station_b.abbr = station_b               " +
-            "        AND (station_b.name = '"+ station_name + "') " +
-            "        AND (station_a.name = '"+ destination_name + "')" +
-            " INNER JOIN (SELECT 'red' AS color,'DALY' AS fd " + 
+	var color_sql = "(SELECT 'red' AS color,'DALY' AS fd " + 
             "                 UNION " + 
             "             SELECT 'blue' AS color,'DALY' AS fd " +
             "                 UNION " + 
@@ -270,7 +214,39 @@ function initDB() {
             "             SELECT 'blue' AS color,'DUBL' AS fd " +
             "                 UNION " + 
             "             SELECT 'yellow' AS color,'SFIA' AS fd) " +
-            "         AS color " +
+            "         AS color ";
+
+	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance,color) " +
+            "     SELECT station_a.abbr, station_b.abbr,1,color   " +
+            "       FROM adjacent                                 " +
+            " INNER JOIN station station_a                        " +
+            "         ON station_a.abbr = station_a               " +
+            " INNER JOIN station station_b                        " +
+            "         ON station_b.abbr = station_b               " +
+            "        AND (station_a.name = '"+ station_name + "') " +
+            "        AND (station_b.name = '"+ destination_name + "')" +
+            "  LEFT JOIN " + color_sql +
+            "         ON (station_b.abbr = fd)";
+
+	try {
+            db.exec(insert_sql);
+	}
+	catch(e) {
+	    log("error: could not insert d_before(1):" + e);
+	    log(insert_sql);
+	    break;
+	}
+
+	insert_sql = "INSERT INTO d_before(final_destination,from_station,distance,color) " +
+            "     SELECT station_a.abbr, station_b.abbr,1,color   " + 
+            "       FROM adjacent                                 " +
+            " INNER JOIN station station_a                        " +
+            "         ON station_a.abbr = station_a               " +
+            " INNER JOIN station station_b                        " +
+            "         ON station_b.abbr = station_b               " +
+            "        AND (station_b.name = '"+ station_name + "') " +
+            "        AND (station_a.name = '"+ destination_name + "')" +
+            "  LEFT JOIN " + color_sql + 
             "         ON (station_a.abbr = fd)";
 	
 	try {
@@ -286,7 +262,6 @@ function initDB() {
 
     /* populate d-before relation (recursive definition) */
     /* ('recursive' in the sense of the definition of d-before, not the implementation). */
-    /* currently needs (at most) 16 iterations to do the transitive closure. */
     var new_count = 0;
     var iteration = 0;
 
@@ -320,7 +295,7 @@ function initDB() {
 
 	// <debug support>
 	iteration++;
-	if (iteration == 0) {
+	if (iteration == 1) {
 	    log(query_a);
 	    break;
 	}
