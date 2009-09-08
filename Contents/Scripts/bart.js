@@ -423,7 +423,12 @@ POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
     var top_bound_to2 = top_row['bound_to2'];
     var top_final_destination = top_row['final_destination'];
 
-    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+    if (top_bound_to1 != top_bound_to2) {
+	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+    }
+    else {
+	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
+    }
 
     bart_row = new bartStationMessage("Leaving from " + top_from_station + ",");
     table_data_frame.appendChild(bart_row);
@@ -436,16 +441,19 @@ POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
     bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
 
-    bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
-    table_data_frame.appendChild(bart_row);
+    if (top_bound_to1 != top_bound_to2) {
+	bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
+	table_data_frame.appendChild(bart_row);
 
-    bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train:");
-    table_data_frame.appendChild(bart_row);
+	bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train:");
+	table_data_frame.appendChild(bart_row);
 
-    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
-    estimate = bartEtaDoc.evaluate(xpath2);
-    bart_row = new bartStationMessage(estimate);
-    table_data_frame.appendChild(bart_row);
+	var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+	estimate = bartEtaDoc.evaluate(xpath2);
+	bart_row = new bartStationMessage(estimate);
+	table_data_frame.appendChild(bart_row);
+    }
+
 
     bart_row = new bartStationMessage("and get off at: " + top_final_destination + ".");
     table_data_frame.appendChild(bart_row);
