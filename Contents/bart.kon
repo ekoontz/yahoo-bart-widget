@@ -2,7 +2,7 @@
 <?konfabulator xml-strict="true"?>
 <widget minimumVersion="4.5">
   <settings>
-    <setting name="debug" value="off"/>
+    <setting name="debug" value="on"/>
   </settings>
 
   <action trigger="onPreferencesChanged">
