@@ -23,7 +23,9 @@
 -->
   <window name="bartWindow" title="Bart Tracker" width="500" visible="1">
     <title>BART Widget</title>
-      <frame style="background:#efefef;" id="barttable" width="450" height="125" voffset="35">
+      <frame style="background:green;" width="450" height="135" voffset="35">
+	<frame style="background:#efefef;" id="barttable" width="425" height="115" hoffset="10" voffset="10">
+	</frame>
       </frame>
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
