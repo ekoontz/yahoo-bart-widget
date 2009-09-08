@@ -122,14 +122,14 @@ function initDB() {
          */
 
     try {
-	db.exec("DROP TABLE IF EXISTS station;");
-	db.exec("CREATE TABLE station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
+	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
+	db.exec("DELETE FROM station");
 	
-	db.exec("DROP TABLE IF EXISTS d_before");
-	db.exec("CREATE TABLE d_before (from_station TEXT,final_destination TEXT, distance INTEGER, color TEXT)");
-	
-	db.exec("DROP TABLE IF EXISTS destination");
-	db.exec("CREATE TABLE destination (station TEXT,destination TEXT, eta TEXT)");
+	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER, color TEXT)");
+	db.exec("DELETE FROM d_before");
+
+	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
+	db.exec("DELETE FROM destination");
     }
     catch (e) {
 	log("could not create tables in bart database.");
