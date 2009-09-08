@@ -216,6 +216,8 @@ function initDB() {
             "             SELECT 'yellow' AS color,'SFIA' AS fd) " +
             "         AS color ";
 
+        color_sql = " (SELECT NULL AS color,NULL AS fd) AS color";
+
 	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance,color) " +
             "     SELECT station_a.abbr, station_b.abbr,1,color   " +
             "       FROM adjacent                                 " +
@@ -295,7 +297,7 @@ function initDB() {
 
 	// <debug support>
 	iteration++;
-	if (iteration == 1) {
+	if (iteration == 0) {
 	    log(query_a);
 	    break;
 	}
