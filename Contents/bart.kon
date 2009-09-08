@@ -23,8 +23,8 @@
 -->
   <window name="bartWindow" title="Bart Tracker" width="500" visible="1">
     <title>BART Widget</title>
-      <frame style="background:green;" width="450" height="135" voffset="35">
-	<frame style="background:#efefef;" id="barttable" width="425" height="115" hoffset="10" voffset="10">
+      <frame style="background:rgb(102,78,145);" width="450" height="135" voffset="35">
+	<frame style="background:rgb(141,206,228);color:rgb(128,124,171)" id="barttable" width="425" height="115" hoffset="10" voffset="10">
 	</frame>
       </frame>
   </window>

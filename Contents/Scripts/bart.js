@@ -479,7 +479,6 @@ function bartStationMessage( text ) {
     obj.text = new Text( );
     obj.text.style.fontFamily = "'Arial Black'";
     obj.text.style.fontSize = "14px";
-    obj.text.style.color = "blue";
     obj.text.hOffset = 14;
     obj.text.vOffset = 16;
     obj.text.data = text;
