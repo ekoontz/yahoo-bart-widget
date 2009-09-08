@@ -389,31 +389,66 @@ function reload_etas() {
 POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
 */
 
-    // 1st leg of journey
-    final_destination = final_destination_first_leg;
-    bart_row = new bartStationMessage("From:" + from_station);
+    var find_q = ""+
+"SELECT A_name.name AS from_station,A_dest.name AS bound_to1, B_name.name AS transfer_at," +
+"       C_name.name AS bound_to2,D_name.name AS final_destination," +
+"       (A.distance - B.distance) + (C.distance - D.distance)" +
+"         FROM d_before A " +
+"   INNER JOIN station A_name" +
+"           ON (A.from_station = A_name.abbr)" +
+"   INNER JOIN station A_dest" +
+"           ON (A.final_destination = A_dest.abbr)" +
+"   INNER JOIN d_before B" +
+"           ON (A.final_destination = B.final_destination) " +
+"   INNER JOIN station B_name" +
+"           ON (B.from_station = B_name.abbr)"+
+"   INNER JOIN d_before C" +
+"           ON (B.from_station = C.from_station)" +
+"   INNER JOIN station C_name" +
+"           ON (C.final_destination = C_name.abbr)" +
+"   INNER JOIN d_before D" +
+"           ON (C.final_destination = D.final_destination) " +
+"   INNER JOIN station D_name" +
+"           ON (D.from_station = D_name.abbr)" +
+"        WHERE A_name.name = '"+from_station + "'" +
+"	  AND D_name.name = '"+to_station + "'" +
+"          AND (A.distance > B.distance)" +
+"          AND (C.distance > D.distance)" +
+"     ORDER BY (A.distance - B.distance) + (C.distance - D.distance);"
+    var find_result = db.query(find_q);
+    var top_row = find_result.getRow();
+    var top_from_station = top_row['from_station'];
+    var top_bound_to1 = top_row['bound_to1'];
+    var top_transfer_at = top_row['transfer_at'];
+    var top_bound_to2 = top_row['bound_to2'];
+    var top_final_destination = top_row['final_destination'];
+
+    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+
+    bart_row = new bartStationMessage("Leaving from " + top_from_station + ",");
     table_data_frame.appendChild(bart_row);
-    bart_row = new bartStationMessage("Get off at:" + transfer_station);
+
+    bart_row = new bartStationMessage("Take the " + top_bound_to1 + "-bound train.");
     table_data_frame.appendChild(bart_row);
-    bart_row = new bartStationMessage("On " + final_destination + " train");
-    table_data_frame.appendChild(bart_row);
-    estimate = bartEtaDoc.evaluate("string(/root/station[name='"+from_station+"']/eta[destination='"+final_destination+"']/estimate)");
+
+    var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
+    estimate = bartEtaDoc.evaluate(xpath1);
     bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
 
-    final_destination = final_destination_second_leg;
-    // 2nd leg of journey
-    bart_row = new bartStationMessage("From:" + transfer_station);
-    table_data_frame.appendChild(bart_row);
-    bart_row = new bartStationMessage("Get off at:" + to_station);
-    table_data_frame.appendChild(bart_row);
-    bart_row = new bartStationMessage("On " + final_destination + " train");
+    bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
     table_data_frame.appendChild(bart_row);
 
-    estimate = bartEtaDoc.evaluate("string(/root/station[name='"+transfer_station+"']/eta[destination='"+final_destination+"']/estimate)");
+    bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train:");
+    table_data_frame.appendChild(bart_row);
+
+    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+    estimate = bartEtaDoc.evaluate(xpath2);
     bart_row = new bartStationMessage(estimate);
     table_data_frame.appendChild(bart_row);
-    
+
+    bart_row = new bartStationMessage("and get off at: " + top_final_destination + ".");
+    table_data_frame.appendChild(bart_row);
 }
 
 function about() {
