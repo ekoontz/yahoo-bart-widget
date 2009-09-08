@@ -23,7 +23,7 @@
 -->
   <window name="bartWindow" title="Bart Tracker" width="500" visible="1">
     <title>BART Widget</title>
-      <frame style="background:#efefef;" id="barttable" width="450" height="125" voffset="25">
+      <frame style="background:#efefef;" id="barttable" width="450" height="125" voffset="35">
       </frame>
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
