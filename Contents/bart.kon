@@ -23,12 +23,8 @@
 -->
   <window name="bartWindow" title="Bart Tracker" width="500" visible="1">
     <title>BART Widget</title>
-    <frame id="bartcontent" width="500" style="font-family: Helvetica, Arial;   font-weight: bold;   font-size: 12px;">
-      <text hOffset="25" vOffset="25" data="BART Tracker" onMouseUp="about()"/>
-      <frame id="barttable" width="450" height="150" voffset="25">
-
+      <frame style="background:#efefef;border:1px solid black" id="barttable" width="450" height="125" voffset="25">
       </frame>
-    </frame>
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
 

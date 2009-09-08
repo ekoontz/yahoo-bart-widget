@@ -438,19 +438,19 @@ POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
 
     var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
     estimate = bartEtaDoc.evaluate(xpath1);
-    bart_row = new bartStationMessage(estimate);
+    bart_row = new bartStationMessage("(" + estimate + ")");
     table_data_frame.appendChild(bart_row);
 
     if (top_bound_to1 != top_bound_to2) {
 	bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
 	table_data_frame.appendChild(bart_row);
 
-	bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train:");
+	bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
 	table_data_frame.appendChild(bart_row);
 
 	var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
 	estimate = bartEtaDoc.evaluate(xpath2);
-	bart_row = new bartStationMessage(estimate);
+	bart_row = new bartStationMessage("(" + estimate + ")");
 	table_data_frame.appendChild(bart_row);
     }
 
@@ -479,7 +479,7 @@ function bartStationMessage( text ) {
     obj.text = new Text( );
     obj.text.style.fontFamily = "'Arial Black'";
     obj.text.style.fontSize = "14px";
-    obj.text.style.color = "#00ff00";
+    obj.text.style.color = "blue";
     obj.text.hOffset = 14;
     obj.text.vOffset = 16;
     obj.text.data = text;
