@@ -3,8 +3,8 @@ table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
 
-//var online = true;
-var online = false;
+var online = true;
+//var online = false;
 var bartEtaDoc;
 
 function initDB() {
@@ -130,6 +130,11 @@ function initDB() {
 
 	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
 	db.exec("DELETE FROM destination");
+
+	db.exec("CREATE TABLE IF NOT EXISTS distance (station_a TEXT,station_b TEXT, stops INTEGER)");
+	db.exec("DELETE FROM distance");
+
+
     }
     catch (e) {
 	log("could not create tables in bart database.");
