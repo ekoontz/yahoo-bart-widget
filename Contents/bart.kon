@@ -25,7 +25,7 @@
     <title>BART Widget</title>
       <frame style="background:rgb(102,78,145);" width="450" height="155" voffset="35">
 	<frame style="background:rgb(141,206,220);color:rgb(128,124,171)" hoffset="20" voffset="10" width="100">
-	  <text voffset="11" hoffset="10" style="font-weight:bold;font-family:sans-serif;font-size:10pt">BART Widget</text>
+	  <text voffset="11" hoffset="10" style="font-weight:bold;font-family:sans-serif;">BART Widget</text>
 	</frame>
 	<frame style="background:rgb(141,206,228);color:rgb(102,78,145)" id="barttable" width="425" height="115" hoffset="10" voffset="30">
 	</frame>
