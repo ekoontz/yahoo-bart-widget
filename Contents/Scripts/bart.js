@@ -3,8 +3,8 @@ table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
 
-var online = true;
-//var online = false;
+//var online = true;
+var online = false;
 var bartEtaDoc;
 
 function initDB() {
@@ -125,7 +125,7 @@ function initDB() {
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
 	db.exec("DELETE FROM station");
 	
-	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER, color TEXT)");
+	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER)");
 	db.exec("DELETE FROM d_before");
 
 	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
@@ -191,45 +191,15 @@ function initDB() {
                we don't know which for any particular pair, so we have to try both. */
 	var insert_sql;
 
-	var color_sql = "(SELECT 'red' AS color,'DALY' AS fd " + 
-            "                 UNION " + 
-            "             SELECT 'blue' AS color,'DALY' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'green' AS color,'DALY' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'red' AS color,'MLBR' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'blue' AS color,'MLBR' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'red' AS color,'RICH' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'red' AS color,'RICH' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'orange' AS color,'FRMT' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'green' AS color,'FRMT' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'yellow' AS color,'PITT' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'blue' AS color,'DUBL' AS fd " +
-            "                 UNION " + 
-            "             SELECT 'yellow' AS color,'SFIA' AS fd) " +
-            "         AS color ";
-
-        color_sql = " (SELECT NULL AS color,NULL AS fd) AS color";
-
-	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance,color) " +
-            "     SELECT station_a.abbr, station_b.abbr,1,color   " +
+	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
+            "     SELECT station_a.abbr, station_b.abbr,1         " +
             "       FROM adjacent                                 " +
             " INNER JOIN station station_a                        " +
             "         ON station_a.abbr = station_a               " +
             " INNER JOIN station station_b                        " +
             "         ON station_b.abbr = station_b               " +
             "        AND (station_a.name = '"+ station_name + "') " +
-            "        AND (station_b.name = '"+ destination_name + "')" +
-            "  LEFT JOIN " + color_sql +
-            "         ON (station_b.abbr = fd)";
-
+            "        AND (station_b.name = '"+ destination_name + "')";
 	try {
             db.exec(insert_sql);
 	}
@@ -239,18 +209,15 @@ function initDB() {
 	    break;
 	}
 
-	insert_sql = "INSERT INTO d_before(final_destination,from_station,distance,color) " +
-            "     SELECT station_a.abbr, station_b.abbr,1,color   " + 
+	insert_sql = "INSERT INTO d_before(final_destination,from_station,distance) " +
+            "     SELECT station_a.abbr, station_b.abbr,1         " + 
             "       FROM adjacent                                 " +
             " INNER JOIN station station_a                        " +
             "         ON station_a.abbr = station_a               " +
             " INNER JOIN station station_b                        " +
             "         ON station_b.abbr = station_b               " +
             "        AND (station_b.name = '"+ station_name + "') " +
-            "        AND (station_a.name = '"+ destination_name + "')" +
-            "  LEFT JOIN " + color_sql + 
-            "         ON (station_a.abbr = fd)";
-	
+            "        AND (station_a.name = '"+ destination_name + "')";
 	try {
             db.exec(insert_sql);
 	}
@@ -276,8 +243,8 @@ function initDB() {
 	new_count = new_count_row['ct'];
 	    
 	var query_a = "" +
-"INSERT INTO d_before (from_station,final_destination,distance,color) \n"+
-"     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1),adj.color\n"+
+"INSERT INTO d_before (from_station,final_destination,distance) \n"+
+"     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1)\n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_a = adj.from_station)\n"+
@@ -292,8 +259,7 @@ function initDB() {
 "         ON existing.from_station = adjacent.station_b \n"+
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
-"        AND existing.final_destination IS NULL \n"+
-"";
+"        AND existing.final_destination IS NULL";
 
 	// <debug support>
 	iteration++;
@@ -310,8 +276,8 @@ function initDB() {
 	}
 
 	query_b = ""+
-"INSERT INTO d_before (from_station,final_destination,distance,color)  \n"+
-"     SELECT adjacent.station_a,adj.final_destination,adj.distance + 1,adj.color\n"+
+"INSERT INTO d_before (from_station,final_destination,distance)  \n"+
+"     SELECT adjacent.station_a,adj.final_destination,adj.distance + 1\n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_b = adj.from_station) \n"+
@@ -326,8 +292,7 @@ function initDB() {
 "         ON existing.from_station = adjacent.station_a \n"+
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
-"        AND existing.final_destination IS NULL \n"+
-		"";
+"        AND existing.final_destination IS NULL";
 
 	// <debug support>
 	iteration++;
@@ -414,6 +379,7 @@ POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
 "	  AND D_name.name = '"+to_station + "'" +
 "          AND (A.distance > B.distance)" +
 "          AND (C.distance > D.distance)" +
+"          AND B.from_station IN ('MCAR','12TH','BALB','BAYF','SANB')" +
 "     ORDER BY (A.distance - B.distance) + (C.distance - D.distance);"
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
@@ -477,8 +443,9 @@ function bartStationMessage( text ) {
     obj.vOffset = vOffset;
     vOffset += 15; // increment global
     obj.text = new Text( );
-    obj.text.style.fontFamily = "'Arial Black'";
+    obj.text.style.fontFamily = "sans-serif";
     obj.text.style.fontSize = "14px";
+    obj.text.style.fontWeight = "bold";
     obj.text.hOffset = 14;
     obj.text.vOffset = 16;
     obj.text.data = text;
