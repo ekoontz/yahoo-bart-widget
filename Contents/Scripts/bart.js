@@ -3,8 +3,8 @@ table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
 
-var online = true;
-//var online = false;
+//var online = true;
+var online = false;
 var bartEtaDoc;
 
 function initDB() {
@@ -130,10 +130,6 @@ function initDB() {
 
 	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
 	db.exec("DELETE FROM destination");
-
-	db.exec("CREATE TABLE IF NOT EXISTS distance (station_a TEXT,station_b TEXT, stops INTEGER)");
-	db.exec("DELETE FROM distance");
-
 
     }
     catch (e) {
@@ -349,16 +345,6 @@ function reload_etas() {
     table_data_frame.home();
     vOffset = 0;
 
-    /* SELECT *,A.distance+B.distance+C.distance+D.distance 
-         FROM d_before A 
-   INNER JOIN d_before B ON (a.final_destination = b.final_destination) 
-   INNER JOIN d_before C ON (b.from_station = c.from_station) 
-   INNER JOIN d_before D ON (c.final_destination = d.final_destination) 
-        WHERE a.from_station='POWL' AND d.from_station='ASHB';
-
-POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
-*/
-
     var find_q = ""+
 "SELECT A_name.name AS from_station,A_dest.name AS bound_to1, B_name.name AS transfer_at," +
 "       C_name.name AS bound_to2,D_name.name AS final_destination," +
@@ -381,7 +367,7 @@ POWL|SFIA|6|MCAR|SFIA|10|MCAR|RICH|4|ASHB|RICH|3|23
 "   INNER JOIN station D_name" +
 "           ON (D.from_station = D_name.abbr)" +
 "        WHERE A_name.name = '"+from_station + "'" +
-"	  AND D_name.name = '"+to_station + "'" +
+"	  AND D_name.name = '"+ to_station + "'" +
 "          AND (A.distance > B.distance)" +
 "          AND (C.distance > D.distance)" +
 "          AND B.from_station IN ('MCAR','12TH','BALB','BAYF','SANB')" +
