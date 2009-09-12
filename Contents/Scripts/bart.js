@@ -8,7 +8,6 @@ var online = false;
 var bartEtaDoc;
 
 function initDB() {
-
     try {
 	if (online == true) {
 	    log("loading remote 'bart_eta.xml'");
@@ -128,6 +127,9 @@ function initDB() {
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER)");
 	db.exec("DELETE FROM d_before");
 
+	db.exec("CREATE TABLE IF NOT EXISTS log (from_station TEXT,final_destination TEXT, distance INTEGER,station_a TEXT,station_b TEXT, iteration INTEGER)");
+	db.exec("DELETE FROM log");
+
 	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
 	db.exec("DELETE FROM destination");
 
@@ -163,6 +165,8 @@ function initDB() {
     /* populate d-before relation (base case) */
     destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
     for (var i = 0; i < destinations.length; i++) {
+	log("iteration: " + i);
+
 	destination = destinations.item(i);
 	station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
 	
@@ -190,8 +194,8 @@ function initDB() {
 	
         /* exactly one of the following INSERT statements will actually do an insert, but 
                we don't know which for any particular pair, so we have to try both. */
-	var insert_sql;
 
+	var insert_sql;
 	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
             "     SELECT station_a.abbr, station_b.abbr,1         " +
             "       FROM adjacent                                 " +
@@ -230,6 +234,8 @@ function initDB() {
 	
     }
 
+    return;
+
     /* populate d-before relation (recursive definition) */
     /* ('recursive' in the sense of the definition of d-before, not the implementation). */
     var new_count = 0;
@@ -242,7 +248,34 @@ function initDB() {
 	var new_count_q = db.query("SELECT count(*) AS ct FROM d_before;");
 	var new_count_row = new_count_q.getRow();
 	new_count = new_count_row['ct'];
-	    
+
+	var log_sql = "INSERT INTO log (from_station,final_destination,distance,station_a,station_b,iteration)" +
+"     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1),station_a,station_b,'"+iteration+"'\n"+
+"       FROM adjacent  \n"+
+" INNER JOIN d_before adj \n"+
+"         ON (station_a = adj.from_station)\n"+
+" INNER JOIN station new  \n"+
+"         ON new.abbr = station_b  \n"+
+" INNER JOIN station dest  \n"+
+"         ON dest.abbr = adj.final_destination \n"+
+" INNER JOIN destination  \n"+
+"         ON dest.name = destination.destination \n"+
+"        AND destination.station = new.name \n"+
+"  LEFT JOIN d_before existing \n"+
+"         ON existing.from_station = adjacent.station_b \n"+
+"        AND existing.final_destination = adj.final_destination \n"+
+"      WHERE existing.from_station IS NULL  \n"+
+"        AND existing.final_destination IS NULL";
+
+	if (true) {
+	    try {
+		db.exec(log_sql);
+	    }
+	    catch(e) {
+		throw("logging failed   "+log_sql);
+	    }
+	}
+
 	var query_a = "" +
 "INSERT INTO d_before (from_station,final_destination,distance) \n"+
 "     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1)\n"+
@@ -265,7 +298,6 @@ function initDB() {
 	// <debug support>
 	iteration++;
 	if (iteration == 0) {
-	    log(query_a);
 	    break;
 	}
 	// </debug support>
@@ -288,21 +320,12 @@ function initDB() {
 "         ON dest.abbr = adj.final_destination \n"+
 " INNER JOIN destination  \n"+
 "         ON dest.name = destination.destination \n"+
-"        AND destination.station = new.name \n"+
+"        AND destination.station = new.name";
 "  LEFT JOIN d_before existing \n"+
 "         ON existing.from_station = adjacent.station_a \n"+
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL";
-
-	// <debug support>
-	iteration++;
-	if (iteration == 0) {
-	    log(query_a);
-	    log(query_b);
-	    break;
-	}
-	// </debug support>
 
 	try {
 	    db.exec(query_b);
@@ -368,10 +391,8 @@ function reload_etas() {
 "           ON (D.from_station = D_name.abbr)" +
 "        WHERE A_name.name = '"+from_station + "'" +
 "	  AND D_name.name = '"+ to_station + "'" +
-"          AND (A.distance > B.distance)" +
-"          AND (C.distance > D.distance)" +
-"          AND B.from_station IN ('MCAR','12TH','BALB','BAYF','SANB')" +
 "     ORDER BY (A.distance - B.distance) + (C.distance - D.distance);"
+//    log(find_q);
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
     var top_from_station = top_row['from_station'];
