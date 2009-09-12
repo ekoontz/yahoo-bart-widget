@@ -1,6 +1,9 @@
-SELECT A_name.name AS from_station,A_dest.name AS bound_to1, B_name.name AS transfer_at,
-       C_name.name AS bound_to2,D_name.name AS final_destination,
-       (A.distance - B.distance) + (C.distance - D.distance)
+SELECT A.*,
+       B.*,
+       C.*,
+       D.*,
+       A.distance - B.distance,
+       C.distance - D.distance
          FROM d_before A 
    INNER JOIN station A_name
            ON (A.from_station = A_name.abbr)
@@ -18,11 +21,15 @@ SELECT A_name.name AS from_station,A_dest.name AS bound_to1, B_name.name AS tran
            ON (C.final_destination = D.final_destination) 
    INNER JOIN station D_name
            ON (D.from_station = D_name.abbr)
-        WHERE A_name.name = 'Powell St.'
-	  AND D_name.name = 'Lake Merritt'
+        WHERE (A_name.name = 'Powell St.')
+	  AND (D_name.name = 'Ashby')
           AND (A.distance > B.distance)
           AND (C.distance > D.distance)
+	  AND B.from_station IN ('MCAR','12TH','BALB','BAYF','SANB')
      ORDER BY (A.distance - B.distance) + (C.distance - D.distance);
+
+
+
 
 
 
