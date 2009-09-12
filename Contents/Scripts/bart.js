@@ -370,8 +370,8 @@ function reload_etas() {
 "	  AND D_name.name = '"+ to_station + "'" +
 "          AND (A.distance > B.distance)" +
 "          AND (C.distance > D.distance)" +
-"          AND B.from_station IN ('MCAR','12TH','BALB','BAYF','SANB')" +
 "     ORDER BY (A.distance - B.distance) + (C.distance - D.distance);"
+    log(find_q);
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
     var top_from_station = top_row['from_station'];
