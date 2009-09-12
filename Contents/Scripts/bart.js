@@ -3,8 +3,8 @@ table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
 
-//var online = true;
-var online = false;
+var online = true;
+//var online = false;
 var bartEtaDoc;
 
 function initDB() {
@@ -346,37 +346,50 @@ function reload_etas() {
     vOffset = 0;
 
     var find_q = ""+
-"SELECT A_name.name AS from_station,A_dest.name AS bound_to1, B_name.name AS transfer_at," +
-"       C_name.name AS bound_to2,D_name.name AS final_destination," +
-"       (A.distance - B.distance) + (C.distance - D.distance)" +
-"         FROM d_before A " +
-"   INNER JOIN station A_name" +
-"           ON (A.from_station = A_name.abbr)" +
-"   INNER JOIN station A_dest" +
-"           ON (A.final_destination = A_dest.abbr)" +
-"   INNER JOIN d_before B" +
-"           ON (A.final_destination = B.final_destination) " +
-"   INNER JOIN station B_name" +
-"           ON (B.from_station = B_name.abbr)"+
-"   INNER JOIN d_before C" +
-"           ON (B.from_station = C.from_station)" +
-"   INNER JOIN station C_name" +
-"           ON (C.final_destination = C_name.abbr)" +
-"   INNER JOIN d_before D" +
-"           ON (C.final_destination = D.final_destination) " +
-"   INNER JOIN station D_name" +
-"           ON (D.from_station = D_name.abbr)" +
-"        WHERE A_name.name = '"+from_station + "'" +
-"	  AND D_name.name = '"+ to_station + "'" +
-"          AND (A.distance > B.distance)" +
-"          AND (C.distance > D.distance)" +
-"     ORDER BY (A.distance - B.distance) + (C.distance - D.distance);"
+"SELECT A.from_station AS from_station,A.final_destination AS bound_to1,A_line_from.color,"+
+"       B.from_station AS transfer_at,D.final_destination AS bound_to2,D.from_station AS final_destination,"+
+"       C_line_from.color,(A.distance - B.distance) + (C.distance - D.distance)      "+
+"      FROM d_before A    "+
+"INNER JOIN d_before B   "+
+"        ON (A.final_destination = B.final_destination)  "+
+"       AND (A.from_station <> B.from_station)"+
+"INNER JOIN d_before C            "+
+"        ON (B.from_station = C.from_station) "+
+"INNER JOIN d_before D     "+
+"        ON (C.final_destination = D.final_destination)     "+
+"       AND (C.from_station <> D.from_station)"+
+"INNER JOIN line A_line_from       "+
+"        ON (A_line_from.station = A.from_station)"+
+"INNER JOIN line A_line_destination       "+
+"        ON (A_line_destination.station = A.final_destination)"+
+"       AND (A_line_from.color = A_line_destination.color)"+
+"INNER JOIN line B_line_from"+
+"        ON (B_line_from.station = B.from_station)   "+
+"       AND (A_line_from.color = B_line_from.color)"+
+"INNER JOIN line B_line_destination       "+
+"        ON (B_line_destination.station = B.final_destination)"+
+"       AND (B_line_from.color = B_line_destination.color)"+
+"INNER JOIN line C_line_from           "+
+"        ON (C_line_from.station = C.from_station)      "+
+"INNER JOIN line C_line_destination                 "+
+"        ON (C_line_destination.station = C.final_destination)      "+
+"       AND (C_line_from.color = C_line_destination.color)      "+
+"INNER JOIN line D_line              "+
+"        ON (D_line.station = D.from_station)        "+
+"       AND (C_line_from.color = D_line.color)         "+
+"     WHERE A.from_station = 'POWL'          "+
+"       AND D.from_station = 'ASHB'        "+
+"       AND (A.distance > B.distance)       "+
+"       AND (C.distance > D.distance)       "+
+"  ORDER BY (A.distance - B.distance) + (C.distance - D.distance)";
+
     log(find_q);
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
     var top_from_station = top_row['from_station'];
     var top_bound_to1 = top_row['bound_to1'];
     var top_transfer_at = top_row['transfer_at'];
+    log("TRANSFER AT " + top_transfer_at);
     var top_bound_to2 = top_row['bound_to2'];
     var top_final_destination = top_row['final_destination'];
 
