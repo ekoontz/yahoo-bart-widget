@@ -2,6 +2,7 @@
 table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
+var db;
 
 var online = true;
 //var online = false;
@@ -32,7 +33,7 @@ function initDB() {
     }
     catch(e) {
 	log("exception reading bart_eta.xml: " + e);
-	return;
+	throw(e);
     }
 
     try {
@@ -43,7 +44,7 @@ function initDB() {
     }
     catch (e) {
 	log("exception opening database");
-	return;
+	throw(e);
     }
 
     /* Definitions: 
@@ -123,18 +124,45 @@ function initDB() {
 
     try {
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
-	db.exec("DELETE FROM station");
-	
-	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER)");
-	db.exec("DELETE FROM d_before");
-
-	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
-	db.exec("DELETE FROM destination");
-
     }
     catch (e) {
-	log("could not create tables in bart database.");
-	log(e);
+	log("could not create station tables:" + e);
+	throw(e);
+    }
+    try {
+	db.exec("DELETE FROM station");
+    }
+    catch (e) {
+	log("could not delete from station:" + e.errCode + ":" + e.errMsg);
+	throw(e);
+    }
+    try {	
+	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER)");
+    }
+    catch (e) {
+	log("could not create d_before:" + e);
+	throw(e);
+    }
+    try {
+	db.exec("DELETE FROM d_before");
+    }
+    catch (e) {
+	log("could not delete from d_before:" + e);
+	throw(e);
+    }
+    try {
+	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
+    }
+    catch (e) {
+	log("could not create destination table:" + e);
+	throw(e);
+    }
+    try {
+	db.exec("DELETE FROM destination");
+    }
+    catch (e) {
+	log("could not delete from destination:" + e);
+	throw(e);
     }
 
     /* populate stations from server XML response. */
@@ -150,11 +178,14 @@ function initDB() {
 	station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
 	station_name = station_name.replace(/\'/g,'\'\'');
 	
+	var insert_station_query = "INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')";
+	
 	try {
-	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+	    db.exec(insert_station_query);
 	}
 	catch(e) {
-	    log("error: could not insert station:" + e);
+	    log("error: could not insert station:" + insert_station_query + " : " + e);
+	    throw(e);
 	}
     }
 
@@ -162,6 +193,30 @@ function initDB() {
 
     /* populate d-before relation (base case) */
     destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
+
+    for (var i = 0; i < destinations.length; i++) {
+	destination = destinations.item(i);
+	destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
+		
+	var insert_sql;
+
+	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
+            "     SELECT station.abbr, station.abbr,0         " +
+            "       FROM station " +
+            "  LEFT JOIN d_before ON (d_before.from_station = station.abbr)" +
+            "      WHERE (station.name = '"+ destination_name + "')" +
+            "        AND (d_before.from_station IS NULL)";
+	try {
+            db.exec(insert_sql);
+	}
+	catch(e) {
+	    log("error: could not insert d_before(1):" + e);
+	    log(insert_sql);
+	    break;
+	}
+
+    }
+
     for (var i = 0; i < destinations.length; i++) {
 	destination = destinations.item(i);
 	station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
@@ -188,9 +243,10 @@ function initDB() {
 	    log("error: could not insert destination:" + e);
 	}
 	
+	var insert_sql;
+
         /* exactly one of the following INSERT statements will actually do an insert, but 
                we don't know which for any particular pair, so we have to try both. */
-	var insert_sql;
 
 	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
             "     SELECT station_a.abbr, station_b.abbr,1         " +
@@ -242,6 +298,8 @@ function initDB() {
 	var new_count_q = db.query("SELECT count(*) AS ct FROM d_before;");
 	var new_count_row = new_count_q.getRow();
 	new_count = new_count_row['ct'];
+
+	new_count_q.dispose();
 	    
 	var query_a = "" +
 "INSERT INTO d_before (from_station,final_destination,distance) \n"+
@@ -340,15 +398,31 @@ function reload_etas() {
     table_data_frame.home();
     vOffset = 0;
 
+    to_station = to_station.replace(/\'/g,'\'\'');
+    if (to_station == "San Francisco Int''l Airport") {
+	to_station = "SF Airport";
+    }
+
     var station_name_query = ""+
 	"SELECT A.abbr AS A_abbr,B.abbr AS B_abbr " +
          " FROM station A " +
     "INNER JOIN station B ON (A.name='"+from_station+"') AND (B.name='"+to_station+"')";
 
-    var station_name_result = db.query(station_name_query);
-    var station_name_row = station_name_result.getRow();
+    var station_name_result;
+    var station_name_row;
+
+    try {
+	station_name_result = db.query(station_name_query);
+	station_name_row = station_name_result.getRow();
+    }
+    catch(e) {
+	throw("could not do station name query : " + station_name_query);
+    }
+
     var station_a_abbr = station_name_row['A_abbr'];
     var station_b_abbr = station_name_row['B_abbr'];
+
+    station_name_result.dispose();
 
     var find_q = ""+
 "SELECT A_station.name AS from_station,A_bound_to.name AS bound_to1,A_line_from.color,"+
@@ -403,7 +477,9 @@ function reload_etas() {
 
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
-    var top_from_station = top_row['from_station'];
+    var top_from_station;
+    top_from_station = top_row['from_station'];
+
     var top_bound_to1 = top_row['bound_to1'];
     var top_transfer_at = top_row['transfer_at'];
     var top_bound_to2 = top_row['bound_to2'];
@@ -443,6 +519,14 @@ function reload_etas() {
 
     bart_row = new bartStationMessage("and get off at: " + top_final_destination + ".");
     table_data_frame.appendChild(bart_row);
+
+    find_result.dispose();
+    try {
+	db.close();
+    }
+    catch (e) {
+    	log("could not close db:" + e.errCode + ":" + e.errMsg);
+    }
 }
 
 function about() {
