@@ -472,8 +472,11 @@ function reload_etas() {
 "       AND D.from_station = '"+station_b_abbr+"'"+
 "       AND (A.distance > B.distance)"+ 
 "       AND (C.distance > D.distance) "+
-"  ORDER BY (A.distance - B.distance) + (C.distance - D.distance)"+
+"  ORDER BY A_line_from.color = C_line_from.color DESC, "+
+"          (A.distance - B.distance) + (C.distance - D.distance)"+
 " LIMIT 10;";
+
+//    log(find_q);
 
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
