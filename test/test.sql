@@ -1,8 +1,9 @@
-SELECT A_station.name AS from_station,A_bound_to.name AS bound_to1,A_line_from.color,
+SELECT A_station.name AS from_station,
+       A_bound_to.name AS bound_to1,A_line_from.color,
        B_station.name AS transfer_at,
        D_bound_to.name AS bound_to2,D_station.name AS final_destination,
        C_line_from.color,
-       (A.distance - B.distance) + (C.distance - D.distance)      
+       abs(A.distance - B.distance) + abs(C.distance - D.distance)      
       FROM d_before A    
 INNER JOIN d_before B   
         ON (A.final_destination = B.final_destination)  
@@ -45,5 +46,5 @@ INNER JOIN station D_bound_to
        AND D.from_station = 'ASHB'
        AND (A.distance > B.distance) 
        AND (C.distance > D.distance) 
-  ORDER BY (A.distance - B.distance) + (C.distance - D.distance)
+  ORDER BY abs((A.distance - B.distance) + (C.distance - D.distance))
 LIMIT 10;
