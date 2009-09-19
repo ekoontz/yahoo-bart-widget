@@ -21,15 +21,62 @@
 
 	Licensed under the GNU Public License version 3.0.
 -->
-  <window name="bartWindow" title="Bart Tracker" width="500" visible="1">
+
+
+  <window name="bartWindow" title="Bart Tracker" height="500" width="325" visible="1">
     <title>BART Widget</title>
-      <frame style="background:rgb(102,78,145);" width="450" height="155" voffset="35">
-	<frame style="background:rgb(141,206,220);color:rgb(128,124,171)" hoffset="20" voffset="10" width="100">
-	  <text voffset="11" hoffset="10" style="font-weight:bold;font-family:sans-serif;">BART Widget</text>
+      <frame style="background:black" width="310" height="100" voffset="0"
+	     style="font-weight:bold;font-family:sans-serif;color:white">
+
+	<frame style="background:rgb(141,206,220);color:black" hoffset="0" voffset="0" width="80">
+	  <text voffset="11" hoffset="1" style="font-weight:bold;font-family:sans-serif;">BART Widget</text>
 	</frame>
-	<frame style="background:rgb(141,206,228);color:rgb(102,78,145)" id="barttable" width="425" height="115" hoffset="10" voffset="30">
+
+	<frame 
+	       width="80" height="100"
+	       voffset="0">
+	  <image
+	     src="Resources/Dock/Icon.png"
+	     hOffset="15" vOffset="60"
+	     hAlign="center"/>
+
+	  <text width="75" style="text-align:center" voffset="50" id="from_station">
+
+	  </text>
+	</frame>
+
+	<frame id="bridge1" style="background:transparent;color:black" 
+	       width="150" height="50" hoffset="80"
+	       voffset="0">
+	  <text voffset="15" hoffset="5" id="details1">
+
+	  </text>
+	  <text voffset="25" hoffset="5" id="estimate1">
+
+	  </text>
+	</frame>
+	<frame style="background:transparent;color:black" 
+	       width="100" height="50" hoffset="75"
+	       voffset="50">
+
+	  <text voffset="15" hoffset="5" id="details2">
+
+	  </text>
+	  <text voffset="25" hoffset="5" id="estimate2">
+
+	  </text>
+	</frame>
+
+	<frame 
+	       height="20" hoffset="225"
+	       width="75" height="100"
+	       voffset="0">
+	  <text width="75" style="text-align:center;" voffset="50" id="to_station">
+
+	  </text>
 	</frame>
       </frame>
+
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
 

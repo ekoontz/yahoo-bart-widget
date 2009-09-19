@@ -406,12 +406,6 @@ function reload_etas() {
     var to_station = preferences.end_station.value;
 
     // remove old messages from barttable.
-    content_to_remove = table_data_frame.evaluate("frame");
-    for (var i = 0; i < content_to_remove.length; i++) {
-	table_data_frame.removeChild(content_to_remove.item(i));
-    }
-    table_data_frame.home();
-    vOffset = 0;
 
     to_station = to_station.replace(/\'/g,'\'\'');
     if (to_station == "San Francisco Int''l Airport") {
@@ -452,7 +446,7 @@ function reload_etas() {
 "         A_line_from.color AS AB_color, "+      
 "         B_station.name AS transfer_at,  "+
 "         NULL AS bound_to2,"+
-"         B.from_station AS final_destination,"+
+"         B_station.name AS final_destination,"+
 "         A_line_from.color AS CD_color,"+
 "         (A.distance - B.distance) AS AB_distance,"+
 "	 0 AS CD_distance"+
@@ -553,6 +547,8 @@ function reload_etas() {
     var top_transfer_at = top_row['transfer_at'];
     var top_bound_to2 = top_row['bound_to2'];
     var top_final_destination = top_row['final_destination'];
+    var ab_train_color = top_row['AB_color'];
+
 
     if (top_bound_to2 != null) {
 	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
@@ -561,33 +557,41 @@ function reload_etas() {
 	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
     }
 
-    bart_row = new bartStationMessage("Leaving from " + top_from_station + ",");
-    table_data_frame.appendChild(bart_row);
+    var from_station = bartWindow.getElementById("from_station");
+    from_station.data = top_from_station;
 
-    bart_row = new bartStationMessage("Take the " + top_bound_to1 + "-bound train.");
-    table_data_frame.appendChild(bart_row);
+    var to_station = bartWindow.getElementById("to_station");
+    to_station.data = top_final_destination;
+
+    var message;
+    if (top_bound_to2 != null) {
+	message = top_bound_to1 + " then " + top_bound_to2;
+    }
+    else {
+	message = top_bound_to1;
+    }
+    var details = bartWindow.getElementById("details1");
+    details.data = message;
+    var bridge = bartWindow.getElementById("bridge1");
+    bridge.style.background = ab_train_color;
 
     var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
     estimate = bartEtaDoc.evaluate(xpath1);
-    bart_row = new bartStationMessage("(" + estimate + ")");
-    table_data_frame.appendChild(bart_row);
+
+    var estimate_textbox = bartWindow.getElementById("estimate1");
+    estimate_textbox.data = estimate;
 
     if (top_bound_to2 != null) {
 	bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
-	table_data_frame.appendChild(bart_row);
-
 	bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
-	table_data_frame.appendChild(bart_row);
 
 	var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
 	estimate = bartEtaDoc.evaluate(xpath2);
 	bart_row = new bartStationMessage("(" + estimate + ")");
-	table_data_frame.appendChild(bart_row);
     }
 
 
     bart_row = new bartStationMessage("and get off at: " + top_final_destination + ".");
-    table_data_frame.appendChild(bart_row);
 
     find_result.dispose();
     try {
