@@ -591,9 +591,16 @@ function reload_etas() {
 	var transfer = bartWindow.getElementById("transfer"+i);
 	transfer.style.background = cd_train_color;
 
+	log("TTA: " + top_transfer_at);
+	log("TFD: " + top_final_destination);
+
+	var transfer_textbox = bartWindow.getElementById("transfer_textbox"+i);
+	transfer_textbox.style.background = cd_train_color;
+
+	transfer_textbox.data = "";
+
 	if (top_transfer_at != top_final_destination) {
-	    
-	    var transfer_textbox = bartWindow.getElementById("transfer_textbox"+i);
+
 	    transfer_textbox.data = "transfer at: " + top_transfer_at;
 	    
 	    if (top_bound_to2 != null) {
