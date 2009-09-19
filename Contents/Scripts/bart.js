@@ -458,6 +458,10 @@ function reload_etas() {
 "       AND (B_line_from.color = B_line_destination.color)"+
 " INNER JOIN line C_line_from           "+
 "        ON (C_line_from.station = C.from_station)"+
+"       AND ((C_line_from.station = '12TH')"+
+"        OR  (C_line_from.station = '19TH')"+
+"	 OR  (C_line_from.station = 'BALB')"+
+"	 OR  (C_line_from.station = 'BAYF'))"+
 " INNER JOIN line C_line_destination           "+
 "        ON (C_line_destination.station = C.final_destination)"+
 "       AND (C_line_from.color = C_line_destination.color)"+
@@ -476,7 +480,7 @@ function reload_etas() {
 "          (A.distance - B.distance) + (C.distance - D.distance)"+
 " LIMIT 10;";
 
-//    log(find_q);
+    log(find_q);
 
     var find_result = db.query(find_q);
     var top_row = find_result.getRow();
