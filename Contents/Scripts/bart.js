@@ -591,18 +591,17 @@ function reload_etas() {
 	var transfer = bartWindow.getElementById("transfer"+i);
 	transfer.style.background = cd_train_color;
 
-	log("TTA: " + top_transfer_at);
-	log("TFD: " + top_final_destination);
-
 	var transfer_textbox = bartWindow.getElementById("transfer_textbox"+i);
 	transfer_textbox.style.background = cd_train_color;
 
 	transfer_textbox.data = "";
 
 	if (top_transfer_at != top_final_destination) {
+	    transfer_textbox.data = "get off at " + top_transfer_at;
 
-	    transfer_textbox.data = "transfer at: " + top_transfer_at;
-	    
+	    var destination_textbox = bartWindow.getElementById("transfer_destination_textbox"+i);
+	    destination_textbox.data = " and take the " + top_bound_to2 + "-bound train.";
+
 	    if (top_bound_to2 != null) {
 		bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
 		bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
