@@ -197,7 +197,17 @@ function initDB() {
     for (var i = 0; i < destinations.length; i++) {
 	destination = destinations.item(i);
 	destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
-		
+
+	/* some time in September, 2009, the BART
+           map changed with respect to SF Airport and Millbrae:
+           The XML feed does not show trains with a final destination
+           of the Airport: instead it shows the destination
+           'SFO/Millbrae', meaning the final destination is
+           at least SF Airport, but that it might continue to 
+           Millbrae from there (after 7pm Mon-Fri; all day Sat and Sun.). */
+	if (destination_name == "SFO/Millbrae") {
+	    destination_name = "SF Airport";
+	}
 	var insert_sql;
 
 	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
@@ -224,10 +234,14 @@ function initDB() {
 	if (station_name == "San Francisco Int''l Airport") {
 	    station_name = "SF Airport";
 	}
-	
+
 	eta = destination.evaluate("ancestor::eta/estimate/text()").item(0).nodeValue;
 	destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
-	
+
+	if (destination_name == "SFO/Millbrae") {
+	    destination_name = "SF Airport";
+	}
+
 	//	    log("station: " + station_name + "; destination: " + destination_name);
 	
 	if (false) {
@@ -276,6 +290,7 @@ function initDB() {
             "        AND (station_b.name = '"+ station_name + "') " +
             "        AND (station_a.name = '"+ destination_name + "')";
 	try {
+//	    log(insert_sql);
             db.exec(insert_sql);
 	}
 	catch(e) {
@@ -548,16 +563,16 @@ function bartStationMessage( text ) {
     obj.change = 0;
     obj.changePercent = 0;
 
-    obj.width = 450;
+    obj.width = 350;
     obj.height = 28;
-    obj.hOffset = 30;
+    obj.hOffset = 2;
     obj.vOffset = vOffset;
     vOffset += 15; // increment global
     obj.text = new Text( );
     obj.text.style.fontFamily = "sans-serif";
     obj.text.style.fontSize = "14px";
     obj.text.style.fontWeight = "bold";
-    obj.text.hOffset = 14;
+    obj.text.hOffset = 4;
     obj.text.vOffset = 16;
     obj.text.data = text;
     obj.appendChild( obj.text );
