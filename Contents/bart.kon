@@ -46,23 +46,31 @@
 	</frame>
 
 	<frame id="bridge1" style="background:transparent;color:black" 
-	       width="150" height="50" hoffset="80"
+	       width="150" height="28" hoffset="80"
 	       voffset="0">
-	  <text voffset="15" hoffset="5" id="details1">
+	  <text voffset="12" hoffset="5" id="details1">
 
 	  </text>
-	  <text voffset="30" hoffset="5" id="estimate1">
+	  <text voffset="25" hoffset="5" id="estimate1">
 
 	  </text>
 	</frame>
-	<frame id="bridge2" style="background:transparent;color:black" 
-	       width="150" height="50" hoffset="80"
-	       voffset="50">
 
-	  <text voffset="15" hoffset="5" id="details2">
+	<frame id="transfer1" style="color:black;"
+	       width="150" height="17" hoffset="80"
+	       voffset="28">
+	  <text voffset="15" hoffset="5" id="transfer_textbox1">
+	  </text>
+	</frame>
+
+	<frame id="bridge2" style="background:transparent;color:black" 
+	       width="150" height="28" hoffset="80"
+	       voffset="46">
+
+	  <text voffset="12" hoffset="5" id="details2">
 
 	  </text>
-	  <text voffset="30" hoffset="5" id="estimate2">
+	  <text voffset="25" hoffset="5" id="estimate2">
 
 	  </text>
 	</frame>
@@ -75,12 +83,20 @@
 
 	  </text>
 	</frame>
+
+	<frame id="transfer2" style="color:black;"
+	       width="150" height="25" hoffset="80"
+	       voffset="75">
+	  <text voffset="15" hoffset="5" id="transfer_textbox2">
+	  </text>
+	</frame>
+
       </frame>
 
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
 
-  <timer name="update_etas_timer" ontimerFired="update_etas()" interval="300" ticking="true"/>
+  <timer name="update_etas_timer" ontimerFired="update_etas()" interval="60" ticking="true"/>
 
   <preference name="start_station" title="Leaving From:" description="The station you're leaving from." type="popup" defaultValue="Glen Park">
     <option>12th St. Oakland City Center</option>

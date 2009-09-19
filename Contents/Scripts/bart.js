@@ -550,6 +550,7 @@ function reload_etas() {
 	var top_bound_to2 = top_row['bound_to2'];
 	var top_final_destination = top_row['final_destination'];
 	var ab_train_color = top_row['AB_color'];
+	var cd_train_color = top_row['CD_color'];
 
 	if (top_bound_to2 != null) {
 	    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
@@ -576,19 +577,33 @@ function reload_etas() {
 	var bridge = bartWindow.getElementById("bridge"+i);
 	bridge.style.background = ab_train_color;
 
+	if (top_bound_to1 == 'SF Airport') {
+	    top_bound_to1 = "SFO/Millbrae";
+	}
+
 	var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
+	log("looking for estimate: " + xpath1);
 	estimate = bartEtaDoc.evaluate(xpath1);
 	
 	var estimate_textbox = bartWindow.getElementById("estimate"+i);
 	estimate_textbox.data = estimate;
-	
-	if (top_bound_to2 != null) {
-	    bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
-	    bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
+
+	var transfer = bartWindow.getElementById("transfer"+i);
+	transfer.style.background = cd_train_color;
+
+	if (top_transfer_at != top_final_destination) {
 	    
-	    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
-	    estimate = bartEtaDoc.evaluate(xpath2);
-	    bart_row = new bartStationMessage("(" + estimate + ")");
+	    var transfer_textbox = bartWindow.getElementById("transfer_textbox"+i);
+	    transfer_textbox.data = "transfer at: " + top_transfer_at;
+	    
+	    if (top_bound_to2 != null) {
+		bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
+		bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
+		
+		var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+		estimate = bartEtaDoc.evaluate(xpath2);
+		bart_row = new bartStationMessage("(" + estimate + ")");
+	    }
 	}
     }
 
