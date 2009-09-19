@@ -37,7 +37,7 @@
 	       voffset="0">
 	  <image
 	     src="Resources/Dock/Icon.png"
-	     hOffset="15" vOffset="60"
+	     hOffset="28" vOffset="15"
 	     hAlign="center"/>
 
 	  <text width="75" style="text-align:center" voffset="50" id="from_station">
@@ -51,18 +51,18 @@
 	  <text voffset="15" hoffset="5" id="details1">
 
 	  </text>
-	  <text voffset="25" hoffset="5" id="estimate1">
+	  <text voffset="30" hoffset="5" id="estimate1">
 
 	  </text>
 	</frame>
-	<frame style="background:transparent;color:black" 
-	       width="100" height="50" hoffset="75"
+	<frame id="bridge2" style="background:transparent;color:black" 
+	       width="150" height="50" hoffset="80"
 	       voffset="50">
 
 	  <text voffset="15" hoffset="5" id="details2">
 
 	  </text>
-	  <text voffset="25" hoffset="5" id="estimate2">
+	  <text voffset="30" hoffset="5" id="estimate2">
 
 	  </text>
 	</frame>

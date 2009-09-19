@@ -536,58 +536,60 @@ function reload_etas() {
 "   ORDER BY AB_color = CD_color DESC,"+
 	"            distance ASC;";
 
-    log(find_q);
+//    log(find_q);
 
     var find_result = db.query(find_q);
-    var top_row = find_result.getRow();
-    var top_from_station;
-    top_from_station = top_row['from_station'];
 
-    var top_bound_to1 = top_row['bound_to1'];
-    var top_transfer_at = top_row['transfer_at'];
-    var top_bound_to2 = top_row['bound_to2'];
-    var top_final_destination = top_row['final_destination'];
-    var ab_train_color = top_row['AB_color'];
+    for(var i = 1; i < 3; i++) {
+	var top_row = find_result.getRow();
+	var top_from_station;
+	top_from_station = top_row['from_station'];
+	
+	var top_bound_to1 = top_row['bound_to1'];
+	var top_transfer_at = top_row['transfer_at'];
+	var top_bound_to2 = top_row['bound_to2'];
+	var top_final_destination = top_row['final_destination'];
+	var ab_train_color = top_row['AB_color'];
 
-
-    if (top_bound_to2 != null) {
-	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+	if (top_bound_to2 != null) {
+	    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+	}
+	else {
+	    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
     }
-    else {
-	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
-    }
+	
+	var from_station = bartWindow.getElementById("from_station");
+	from_station.data = top_from_station;
+	
+	var to_station = bartWindow.getElementById("to_station");
+	to_station.data = top_final_destination;
+	
+	var message;
+	if (top_bound_to2 != null) {
+	    message = top_bound_to1;
+	}
+	else {
+	    message = top_bound_to1;
+	}
+	var details = bartWindow.getElementById("details"+i);
+	details.data = message;
+	var bridge = bartWindow.getElementById("bridge"+i);
+	bridge.style.background = ab_train_color;
 
-    var from_station = bartWindow.getElementById("from_station");
-    from_station.data = top_from_station;
-
-    var to_station = bartWindow.getElementById("to_station");
-    to_station.data = top_final_destination;
-
-    var message;
-    if (top_bound_to2 != null) {
-	message = top_bound_to1 + " then " + top_bound_to2;
-    }
-    else {
-	message = top_bound_to1;
-    }
-    var details = bartWindow.getElementById("details1");
-    details.data = message;
-    var bridge = bartWindow.getElementById("bridge1");
-    bridge.style.background = ab_train_color;
-
-    var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
-    estimate = bartEtaDoc.evaluate(xpath1);
-
-    var estimate_textbox = bartWindow.getElementById("estimate1");
-    estimate_textbox.data = estimate;
-
-    if (top_bound_to2 != null) {
-	bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
-	bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
-
-	var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
-	estimate = bartEtaDoc.evaluate(xpath2);
-	bart_row = new bartStationMessage("(" + estimate + ")");
+	var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
+	estimate = bartEtaDoc.evaluate(xpath1);
+	
+	var estimate_textbox = bartWindow.getElementById("estimate"+i);
+	estimate_textbox.data = estimate;
+	
+	if (top_bound_to2 != null) {
+	    bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
+	    bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
+	    
+	    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+	    estimate = bartEtaDoc.evaluate(xpath2);
+	    bart_row = new bartStationMessage("(" + estimate + ")");
+	}
     }
 
 
