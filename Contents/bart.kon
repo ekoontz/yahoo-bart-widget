@@ -21,19 +21,107 @@
 
 	Licensed under the GNU Public License version 3.0.
 -->
-  <window name="bartWindow" title="Bart Tracker" width="500" visible="1">
+
+
+  <window name="bartWindow" title="Bart Tracker" height="500" width="325" visible="1">
     <title>BART Widget</title>
-      <frame style="background:rgb(102,78,145);" width="450" height="155" voffset="35">
-	<frame style="background:rgb(141,206,220);color:rgb(128,124,171)" hoffset="20" voffset="10" width="100">
-	  <text voffset="11" hoffset="10" style="font-weight:bold;font-family:sans-serif;">BART Widget</text>
+      <frame style="background:transparent" width="310" height="100" voffset="0"
+	     style="font-weight:bold;font-family:sans-serif;">
+	<frame style="background:white;" hoffset="0" voffset="0" width="80">
+	  <text voffset="11" hoffset="1" style="font-weight:bold;font-family:sans-serif">BART Widget</text>
 	</frame>
-	<frame style="background:rgb(141,206,228);color:rgb(102,78,145)" id="barttable" width="425" height="115" hoffset="10" voffset="30">
+
+	<frame 
+	       width="80" height="100"
+	       voffset="0">
+	  <image
+	     opacity="90%"
+	     src="Resources/Dock/Icon.png"
+	     hOffset="28"
+	     hAlign="center"/>
+
+	  <text width="75" style="text-align:center;color:white" voffset="50" id="from_station">
+
+	  </text>
 	</frame>
+
+	<frame id="bridge1" style="background:transparent;"
+	       width="156" height="28" hoffset="80"
+	       voffset="0">
+	  <text voffset="12" hoffset="5" id="details1">
+
+	  </text>
+	  <text voffset="25" hoffset="5" id="estimate1">
+
+	  </text>
+	</frame>
+
+	<frame id="transfer1"
+	       width="156" height="25" hoffset="80"
+	       voffset="28">
+	  <text voffset="7" hoffset="1" id="transfer_textbox1" size="9">
+	  </text>
+
+	  <text voffset="17" hoffset="1" id="transfer_destination_textbox1" size="9">
+
+	  </text>
+
+
+	</frame>
+
+	<frame id="destination1"
+	       width="156" height="12" hoffset="80"
+	       voffset="75">
+	  <text voffset="9" hoffset="1" id="destination1_textbox" size="8">
+	  </text>
+	</frame>
+
+	<frame id="bridge2" style="background:transparent;color:black" 
+	       width="156" height="28" hoffset="80"
+	       voffset="46">
+
+	  <text voffset="12" hoffset="5" id="details2">
+
+	  </text>
+	  <text voffset="25" hoffset="5" id="estimate2">
+
+	  </text>
+	</frame>
+
+	<frame id="transfer2" style="color:black;"
+	       width="156" height="25" hoffset="80"
+	       voffset="75">
+	  <text voffset="9" hoffset="2" id="transfer_textbox2" size="9">
+	  </text>
+
+	  <text voffset="20" hoffset="1" id="transfer_destination_textbox2" size="9">
+
+	  </text>
+
+	</frame>
+
+	<frame 
+	       height="20" hoffset="235"
+	       width="75" height="100"
+	       voffset="0">
+
+	  <image
+	     opacity="90%"
+	     src="Resources/Dock/Iconflipped.png"
+	     hOffset="50" vOffset="0"
+	     hAlign="center"/>
+
+	  <text width="75" style="text-align:center;color:white" voffset="50" id="to_station">
+
+	  </text>
+	</frame>
+
       </frame>
+
   </window>
   <script src="Scripts/bart.js" charset="utf-8"/>
 
-  <timer name="update_etas_timer" ontimerFired="update_etas()" interval="300" ticking="true"/>
+  <timer name="update_etas_timer" ontimerFired="update_etas()" interval="120" ticking="true"/>
 
   <preference name="start_station" title="Leaving From:" description="The station you're leaving from." type="popup" defaultValue="Glen Park">
     <option>12th St. Oakland City Center</option>

@@ -2,9 +2,10 @@
 table_data_frame = bartWindow.getElementById("barttable");
 
 var vOffset = 0;
+var db;
 
-//var online = true;
-var online = false;
+var online = true;
+//var online = false;
 var bartEtaDoc;
 
 function initDB() {
@@ -31,7 +32,7 @@ function initDB() {
     }
     catch(e) {
 	log("exception reading bart_eta.xml: " + e);
-	return;
+	throw(e);
     }
 
     try {
@@ -42,7 +43,7 @@ function initDB() {
     }
     catch (e) {
 	log("exception opening database");
-	return;
+	throw(e);
     }
 
     /* Definitions: 
@@ -122,21 +123,49 @@ function initDB() {
 
     try {
 	db.exec("CREATE TABLE IF NOT EXISTS station (name TEXT,abbr CHAR(4) PRIMARY KEY)");
+    }
+    catch (e) {
+	log("could not create station tables:" + e);
+	throw(e);
+    }
+    try {
 	db.exec("DELETE FROM station");
-	
+    }
+    catch (e) {
+	log("could not delete from station:" + e.errCode + ":" + e.errMsg);
+	throw(e);
+    }
+    try {	
 	db.exec("CREATE TABLE IF NOT EXISTS d_before (from_station TEXT,final_destination TEXT, distance INTEGER)");
+    }
+    catch (e) {
+	log("could not create d_before:" + e);
+	throw(e);
+    }
+    try {
 	db.exec("DELETE FROM d_before");
 
 	db.exec("CREATE TABLE IF NOT EXISTS log (from_station TEXT,final_destination TEXT, distance INTEGER,station_a TEXT,station_b TEXT, iteration INTEGER)");
 	db.exec("DELETE FROM log");
 
-	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
-	db.exec("DELETE FROM destination");
-
     }
     catch (e) {
-	log("could not create tables in bart database.");
-	log(e);
+	log("could not delete from d_before, or could not create log table, or could not delete from it" + e);
+	throw(e);
+    }
+    try {
+	db.exec("CREATE TABLE IF NOT EXISTS destination (station TEXT,destination TEXT, eta TEXT)");
+    }
+    catch (e) {
+	log("could not create destination table:" + e);
+	throw(e);
+    }
+    try {
+	db.exec("DELETE FROM destination");
+    }
+    catch (e) {
+	log("could not delete from destination:" + e);
+	throw(e);
     }
 
     /* populate stations from server XML response. */
@@ -152,11 +181,14 @@ function initDB() {
 	station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
 	station_name = station_name.replace(/\'/g,'\'\'');
 	
+	var insert_station_query = "INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')";
+	
 	try {
-	    db.exec("INSERT INTO station (name,abbr) VALUES ('"+station_name+"','"+station_abbr+"')");
+	    db.exec(insert_station_query);
 	}
 	catch(e) {
-	    log("error: could not insert station:" + e);
+	    log("error: could not insert station:" + insert_station_query + " : " + e);
+	    throw(e);
 	}
     }
 
@@ -164,6 +196,40 @@ function initDB() {
 
     /* populate d-before relation (base case) */
     destinations = bartEtaDoc.evaluate( "/root/station/eta/destination/text()" );
+
+    for (var i = 0; i < destinations.length; i++) {
+	destination = destinations.item(i);
+	destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
+
+	/* some time in September, 2009, the BART
+           map changed with respect to SF Airport and Millbrae:
+           The XML feed does not show trains with a final destination
+           of the Airport: instead it shows the destination
+           'SFO/Millbrae', meaning the final destination is
+           at least SF Airport, but that it might continue to 
+           Millbrae from there (after 7pm Mon-Fri; all day Sat and Sun.). */
+	if (destination_name == "SFO/Millbrae") {
+	    destination_name = "SF Airport";
+	}
+	var insert_sql;
+
+	insert_sql = "INSERT INTO d_before(from_station,final_destination,distance) " +
+            "     SELECT station.abbr, station.abbr,0         " +
+            "       FROM station " +
+            "  LEFT JOIN d_before ON (d_before.from_station = station.abbr)" +
+            "      WHERE (station.name = '"+ destination_name + "')" +
+            "        AND (d_before.from_station IS NULL)";
+	try {
+            db.exec(insert_sql);
+	}
+	catch(e) {
+	    log("error: could not insert d_before(1):" + e);
+	    log(insert_sql);
+	    break;
+	}
+
+    }
+
     for (var i = 0; i < destinations.length; i++) {
 	log("iteration: " + i);
 
@@ -173,10 +239,14 @@ function initDB() {
 	if (station_name == "San Francisco Int''l Airport") {
 	    station_name = "SF Airport";
 	}
-	
+
 	eta = destination.evaluate("ancestor::eta/estimate/text()").item(0).nodeValue;
 	destination_name = destination.nodeValue.replace(/\'/g,'\'\'');
-	
+
+	if (destination_name == "SFO/Millbrae") {
+	    destination_name = "SF Airport";
+	}
+
 	//	    log("station: " + station_name + "; destination: " + destination_name);
 	
 	if (false) {
@@ -192,6 +262,8 @@ function initDB() {
 	    log("error: could not insert destination:" + e);
 	}
 	
+	var insert_sql;
+
         /* exactly one of the following INSERT statements will actually do an insert, but 
                we don't know which for any particular pair, so we have to try both. */
 
@@ -224,6 +296,7 @@ function initDB() {
             "        AND (station_b.name = '"+ station_name + "') " +
             "        AND (station_a.name = '"+ destination_name + "')";
 	try {
+//	    log(insert_sql);
             db.exec(insert_sql);
 	}
 	catch(e) {
@@ -276,6 +349,8 @@ function initDB() {
 	    }
 	}
 
+	new_count_q.dispose();
+	    
 	var query_a = "" +
 "INSERT INTO d_before (from_station,final_destination,distance) \n"+
 "     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1)\n"+
@@ -355,86 +430,224 @@ function reload_etas() {
     var from_station = preferences.start_station.value;
     var to_station = preferences.end_station.value;
 
-    var transfer_station = "12th St. Oakland City Center";
-    var final_destination_first_leg = "Pittsburg/Bay Point";
-    var final_destination_second_leg = "Richmond";
-    var final_destination;
-
     // remove old messages from barttable.
-    content_to_remove = table_data_frame.evaluate("frame");
-    for (var i = 0; i < content_to_remove.length; i++) {
-	table_data_frame.removeChild(content_to_remove.item(i));
-    }
-    table_data_frame.home();
-    vOffset = 0;
 
+    to_station = to_station.replace(/\'/g,'\'\'');
+    if (to_station == "San Francisco Int''l Airport") {
+	to_station = "SF Airport";
+    }
+
+    var station_name_query = ""+
+	"SELECT A.abbr AS A_abbr,B.abbr AS B_abbr " +
+         " FROM station A " +
+    "INNER JOIN station B ON (A.name='"+from_station+"') AND (B.name='"+to_station+"')";
+
+    var station_name_result;
+    var station_name_row;
+
+    try {
+	station_name_result = db.query(station_name_query);
+	station_name_row = station_name_result.getRow();
+    }
+    catch(e) {
+	throw("could not do station name query : " + station_name_query);
+    }
+
+    var station_a_abbr = station_name_row['A_abbr'];
+    var station_b_abbr = station_name_row['B_abbr'];
+
+    station_name_result.dispose();
+
+    /* station_a_abbr, station_b_abbr */
     var find_q = ""+
-"SELECT A_name.name AS from_station,A_dest.name AS bound_to1, B_name.name AS transfer_at," +
-"       C_name.name AS bound_to2,D_name.name AS final_destination," +
-"       (A.distance - B.distance) + (C.distance - D.distance)" +
-"         FROM d_before A " +
-"   INNER JOIN station A_name" +
-"           ON (A.from_station = A_name.abbr)" +
-"   INNER JOIN station A_dest" +
-"           ON (A.final_destination = A_dest.abbr)" +
-"   INNER JOIN d_before B" +
-"           ON (A.final_destination = B.final_destination) " +
-"   INNER JOIN station B_name" +
-"           ON (B.from_station = B_name.abbr)"+
-"   INNER JOIN d_before C" +
-"           ON (B.from_station = C.from_station)" +
-"   INNER JOIN station C_name" +
-"           ON (C.final_destination = C_name.abbr)" +
-"   INNER JOIN d_before D" +
-"           ON (C.final_destination = D.final_destination) " +
-"   INNER JOIN station D_name" +
-"           ON (D.from_station = D_name.abbr)" +
-"        WHERE A_name.name = '"+from_station + "'" +
-"	  AND D_name.name = '"+ to_station + "'" +
-"     ORDER BY (A.distance - B.distance) + (C.distance - D.distance);"
+"SELECT from_station,bound_to1,AB_color,"+
+"       transfer_at,bound_to2,CD_color,"+
+"       (AB_distance + CD_distance) AS distance,"+
+"       final_destination"+
+" FROM"+
+"(    "+
+"  SELECT A_station.name AS from_station,"+
+"         A_bound_to.name AS bound_to1,"+
+"         A_line_from.color AS AB_color, "+      
+"         B_station.name AS transfer_at,  "+
+"         NULL AS bound_to2,"+
+"         B_station.name AS final_destination,"+
+"         A_line_from.color AS CD_color,"+
+"         (A.distance - B.distance) AS AB_distance,"+
+"	 0 AS CD_distance"+
+"        FROM d_before A   "+
+"  INNER JOIN d_before B    "+
+"          ON (A.final_destination = B.final_destination)   "+
+"         AND (A.from_station <> B.from_station) "+
+"  INNER JOIN station A_station        "+
+"          ON A_station.abbr = A.from_station "+
+"  INNER JOIN station A_bound_to  "+
+"          ON A_bound_to.abbr = A.final_destination"+
+"  INNER JOIN station B_station   "+
+"          ON B_station.abbr = B.from_station "+
+"  INNER JOIN line A_line_from          "+
+"          ON (A_line_from.station = A.from_station) "+
+"  INNER JOIN line A_line_destination            "+
+"          ON (A_line_destination.station = A.final_destination)  "+
+"         AND (A_line_from.color = A_line_destination.color)"+
+"  INNER JOIN line B_line_from     "+
+"          ON (B_line_from.station = B.from_station)        "+
+"         AND (A_line_from.color = B_line_from.color) "+
+"  INNER JOIN line B_line_destination           "+
+"          ON (B_line_destination.station = B.final_destination)   "+
+"         AND (B_line_from.color = B_line_destination.color) "+
+"       WHERE A.from_station = '"+station_a_abbr+"'"+
+"         AND B.from_station = '"+station_b_abbr+"'"+
+"         AND (A_line_from.color = B_line_from.color)"+
+"         AND (A.distance > B.distance) "+
+"UNION"+
+"  SELECT A_station.name AS from_station,"+
+"         A_bound_to.name AS bound_to1,"+
+"         A_line_from.color AS AB_color,"+
+"         B_station.name AS transfer_at,  "+  
+"         D_bound_to.name AS bound_to2,"+
+"         D_station.name AS final_destination, "+
+"         C_line_from.color AS CD_color,"+
+"         (A.distance - B.distance) AS AB_distance,"+
+"         (C.distance - D.distance) AS CD_distance"+
+"       FROM d_before A     "+
+" INNER JOIN d_before B       "+
+"         ON (A.final_destination = B.final_destination)  "+
+"        AND (A.from_station <> B.from_station) "+
+" INNER JOIN station A_station     "+
+"         ON A_station.abbr = A.from_station"+
+" INNER JOIN station A_bound_to     "+
+"         ON A_bound_to.abbr = A.final_destination"+
+" INNER JOIN d_before C              "+
+"         ON (B.from_station = C.from_station) "+
+" INNER JOIN d_before D          "+
+"         ON (C.final_destination = D.final_destination)            "+
+"        AND (C.from_station <> D.from_station) "+
+" INNER JOIN station B_station      "+
+"         ON B_station.abbr = B.from_station"+
+" INNER JOIN line A_line_from          "+
+"         ON (A_line_from.station = A.from_station)"+
+" INNER JOIN line A_line_destination"+
+"         ON (A_line_destination.station = A.final_destination)  "+
+"        AND (A_line_from.color = A_line_destination.color) "+
+" INNER JOIN line B_line_from        "+
+"         ON (B_line_from.station = B.from_station) "+
+"        AND (A_line_from.color = B_line_from.color) "+
+" INNER JOIN line B_line_destination "+
+"         ON (B_line_destination.station = B.final_destination)"+
+"        AND (B_line_from.color = B_line_destination.color) "+
+" INNER JOIN line C_line_from "+
+"         ON (C_line_from.station = C.from_station)  "+
+"        AND ((C_line_from.station = '12TH')"+
+"         OR  (C_line_from.station = '19TH')"+
+"	 OR  (C_line_from.station = 'BALB')"+
+"	 OR  (C_line_from.station = 'BAYF'))"+
+" INNER JOIN line C_line_destination "+
+"         ON (C_line_destination.station = C.final_destination) "+
+"        AND (C_line_from.color = C_line_destination.color)"+
+" INNER JOIN line D_line"+
+"         ON (D_line.station = D.from_station)"+
+"        AND (C_line_from.color = D_line.color)"+
+" INNER JOIN station D_station"+
+"         ON D_station.abbr = D.from_station"+
+" INNER JOIN station D_bound_to"+
+"         ON D_bound_to.abbr = D.final_destination"+
+"      WHERE A.from_station = '"+station_a_abbr+"'"+
+"        AND D.from_station = '"+station_b_abbr+"'"+
+"        AND AB_color <> CD_color"+
+"        AND (A.distance > B.distance) "+
+"        AND (C.distance > D.distance) "+
+")"+
+"   ORDER BY AB_color = CD_color DESC,"+
+	"            distance ASC;";
+
 //    log(find_q);
+
     var find_result = db.query(find_q);
-    var top_row = find_result.getRow();
-    var top_from_station = top_row['from_station'];
-    var top_bound_to1 = top_row['bound_to1'];
-    var top_transfer_at = top_row['transfer_at'];
-    var top_bound_to2 = top_row['bound_to2'];
-    var top_final_destination = top_row['final_destination'];
 
-    if (top_bound_to1 != top_bound_to2) {
-	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+    for(var i = 1; i < 3; i++) {
+	var top_row = find_result.getRow();
+	var top_from_station;
+	top_from_station = top_row['from_station'];
+	
+	var top_bound_to1 = top_row['bound_to1'];
+	var top_transfer_at = top_row['transfer_at'];
+	var top_bound_to2 = top_row['bound_to2'];
+	var top_final_destination = top_row['final_destination'];
+	var ab_train_color = top_row['AB_color'];
+	var cd_train_color = top_row['CD_color'];
+
+	if (top_bound_to2 != null) {
+	    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+	}
+	else {
+	    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
     }
-    else {
-	log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
-    }
+	
+	var from_station = bartWindow.getElementById("from_station");
+	from_station.data = top_from_station;
+	
+	var to_station = bartWindow.getElementById("to_station");
+	to_station.data = top_final_destination;
+	
+	var message;
+	if (top_bound_to2 != null) {
+	    message = top_bound_to1;
+	}
+	else {
+	    message = top_bound_to1;
+	}
+	var details = bartWindow.getElementById("details"+i);
+	details.data = message;
+	var bridge = bartWindow.getElementById("bridge"+i);
+	bridge.style.background = ab_train_color;
 
-    bart_row = new bartStationMessage("Leaving from " + top_from_station + ",");
-    table_data_frame.appendChild(bart_row);
+	if (top_bound_to1 == 'SF Airport') {
+	    top_bound_to1 = "SFO/Millbrae";
+	}
 
-    bart_row = new bartStationMessage("Take the " + top_bound_to1 + "-bound train.");
-    table_data_frame.appendChild(bart_row);
+	var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
+	log("looking for estimate: " + xpath1);
+	estimate = bartEtaDoc.evaluate(xpath1);
+	
+	var estimate_textbox = bartWindow.getElementById("estimate"+i);
+	estimate_textbox.data = estimate;
 
-    var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
-    estimate = bartEtaDoc.evaluate(xpath1);
-    bart_row = new bartStationMessage("(" + estimate + ")");
-    table_data_frame.appendChild(bart_row);
+	var transfer = bartWindow.getElementById("transfer"+i);
+	transfer.style.background = cd_train_color;
 
-    if (top_bound_to1 != top_bound_to2) {
-	bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
-	table_data_frame.appendChild(bart_row);
+	var transfer_textbox = bartWindow.getElementById("transfer_textbox"+i);
+	transfer_textbox.style.background = cd_train_color;
 
-	bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
-	table_data_frame.appendChild(bart_row);
+	transfer_textbox.data = "";
 
-	var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
-	estimate = bartEtaDoc.evaluate(xpath2);
-	bart_row = new bartStationMessage("(" + estimate + ")");
-	table_data_frame.appendChild(bart_row);
+	if (top_transfer_at != top_final_destination) {
+	    transfer_textbox.data = "get off at " + top_transfer_at;
+
+	    var destination_textbox = bartWindow.getElementById("transfer_destination_textbox"+i);
+	    destination_textbox.data = " and take the " + top_bound_to2 + "-bound train.";
+
+	    if (top_bound_to2 != null) {
+		bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
+		bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
+		
+		var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+		estimate = bartEtaDoc.evaluate(xpath2);
+		bart_row = new bartStationMessage("(" + estimate + ")");
+	    }
+	}
     }
 
 
     bart_row = new bartStationMessage("and get off at: " + top_final_destination + ".");
-    table_data_frame.appendChild(bart_row);
+
+    find_result.dispose();
+    try {
+	db.close();
+    }
+    catch (e) {
+    	log("could not close db:" + e.errCode + ":" + e.errMsg);
+    }
 }
 
 function about() {
@@ -449,16 +662,16 @@ function bartStationMessage( text ) {
     obj.change = 0;
     obj.changePercent = 0;
 
-    obj.width = 450;
+    obj.width = 350;
     obj.height = 28;
-    obj.hOffset = 30;
+    obj.hOffset = 2;
     obj.vOffset = vOffset;
     vOffset += 15; // increment global
     obj.text = new Text( );
     obj.text.style.fontFamily = "sans-serif";
     obj.text.style.fontSize = "14px";
     obj.text.style.fontWeight = "bold";
-    obj.text.hOffset = 14;
+    obj.text.hOffset = 4;
     obj.text.vOffset = 16;
     obj.text.data = text;
     obj.appendChild( obj.text );
