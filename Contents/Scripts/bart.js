@@ -4,11 +4,12 @@ table_data_frame = bartWindow.getElementById("barttable");
 var vOffset = 0;
 var db;
 
-var online = true;
-//var online = false;
+//var online = true;
+var online = false;
 var bartEtaDoc;
 
 function initDB() {
+
     try {
 	if (online == true) {
 	    log("loading remote 'bart_eta.xml'");
@@ -25,8 +26,10 @@ function initDB() {
 
 	}
 	else {
-	    log("reading local 'bart_eta.xml'");
-	    bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
+	    log("reading local 'bart_eta.xml' from : " + system.widgetDataFolder + "/bart_eta.xml");
+//	    bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
+	    bartEtaDoc = XMLDOM.parse( filesystem.readFile(system.widgetDataFolder + "/bart_eta.xml"));
+	    log("..done.");
 	}
 	log("..ok.");
     }
@@ -170,6 +173,9 @@ function initDB() {
 
     /* populate stations from server XML response. */
     stations = bartEtaDoc.evaluate( "/root/station" );
+
+    log("found " + stations.length + " stations");
+
     for (var i = 0; i < stations.length; i++) {
 	station = stations.item(i);
 	station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
@@ -231,8 +237,6 @@ function initDB() {
     }
 
     for (var i = 0; i < destinations.length; i++) {
-	log("iteration: " + i);
-
 	destination = destinations.item(i);
 	station_name = destination.evaluate("ancestor::station/name/text()").item(0).nodeValue.replace(/\'/g,'\'\'');
 	
@@ -307,8 +311,6 @@ function initDB() {
 	
     }
 
-    return;
-
     /* populate d-before relation (recursive definition) */
     /* ('recursive' in the sense of the definition of d-before, not the implementation). */
     var new_count = 0;
@@ -321,33 +323,6 @@ function initDB() {
 	var new_count_q = db.query("SELECT count(*) AS ct FROM d_before;");
 	var new_count_row = new_count_q.getRow();
 	new_count = new_count_row['ct'];
-
-	var log_sql = "INSERT INTO log (from_station,final_destination,distance,station_a,station_b,iteration)" +
-"     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1),station_a,station_b,'"+iteration+"'\n"+
-"       FROM adjacent  \n"+
-" INNER JOIN d_before adj \n"+
-"         ON (station_a = adj.from_station)\n"+
-" INNER JOIN station new  \n"+
-"         ON new.abbr = station_b  \n"+
-" INNER JOIN station dest  \n"+
-"         ON dest.abbr = adj.final_destination \n"+
-" INNER JOIN destination  \n"+
-"         ON dest.name = destination.destination \n"+
-"        AND destination.station = new.name \n"+
-"  LEFT JOIN d_before existing \n"+
-"         ON existing.from_station = adjacent.station_b \n"+
-"        AND existing.final_destination = adj.final_destination \n"+
-"      WHERE existing.from_station IS NULL  \n"+
-"        AND existing.final_destination IS NULL";
-
-	if (true) {
-	    try {
-		db.exec(log_sql);
-	    }
-	    catch(e) {
-		throw("logging failed   "+log_sql);
-	    }
-	}
 
 	new_count_q.dispose();
 	    
@@ -373,6 +348,7 @@ function initDB() {
 	// <debug support>
 	iteration++;
 	if (iteration == 0) {
+	    log(query_a);
 	    break;
 	}
 	// </debug support>
@@ -395,12 +371,21 @@ function initDB() {
 "         ON dest.abbr = adj.final_destination \n"+
 " INNER JOIN destination  \n"+
 "         ON dest.name = destination.destination \n"+
-"        AND destination.station = new.name";
+"        AND destination.station = new.name \n"+
 "  LEFT JOIN d_before existing \n"+
 "         ON existing.from_station = adjacent.station_a \n"+
 "        AND existing.final_destination = adj.final_destination \n"+
 "      WHERE existing.from_station IS NULL  \n"+
 "        AND existing.final_destination IS NULL";
+
+	// <debug support>
+	iteration++;
+	if (iteration == 0) {
+	    log(query_a);
+	    log(query_b);
+	    break;
+	}
+	// </debug support>
 
 	try {
 	    db.exec(query_b);
@@ -451,6 +436,12 @@ function reload_etas() {
     }
     catch(e) {
 	throw("could not do station name query : " + station_name_query);
+    }
+
+    if (station_name_row == null) {
+	log("no stations found: your database is not populated with station information.");
+	throw("no stations found: your database is not populated with station information.");
+	
     }
 
     var station_a_abbr = station_name_row['A_abbr'];
@@ -538,6 +529,10 @@ function reload_etas() {
 "        AND (B_line_from.color = B_line_destination.color) "+
 " INNER JOIN line C_line_from "+
 "         ON (C_line_from.station = C.from_station)  "+
+	/* do we need DALY (Daly City) in here? (it is called
+a transfer station but there is no reason to you would want to transfer there,
+so it probably is not needed.)
+*/
 "        AND ((C_line_from.station = '12TH')"+
 "         OR  (C_line_from.station = '19TH')"+
 "	 OR  (C_line_from.station = 'BALB')"+
