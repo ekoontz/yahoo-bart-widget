@@ -4,8 +4,8 @@ table_data_frame = bartWindow.getElementById("barttable");
 var vOffset = 0;
 var db;
 
-//var online = true;
-var online = false;
+var online = true;
+//var online = false;
 var bartEtaDoc;
 
 function initDB() {
