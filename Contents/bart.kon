@@ -23,12 +23,53 @@
 -->
 
 
-  <window name="bartWindow" title="Bart Tracker" height="500" width="325" visible="1">
+  <window name="bartWindow" title="Bart Tracker" visible="1">
     <title>BART Widget</title>
-      <frame style="background:transparent" width="310" height="100" voffset="0"
+      <frame style="background:white" width="310" height="200" voffset="0"
 	     style="font-weight:bold;font-family:sans-serif;">
-	<frame style="background:white;" hoffset="0" voffset="0" width="80">
-	  <text voffset="11" hoffset="1" style="font-weight:bold;font-family:sans-serif">BART Widget</text>
+
+	<frame style="background:#ced" width="310" height="100" voffset="100">
+	  <text voffset="15" 
+		hoffset="5" 
+		style="color:blue;font-weight:bold;font-family:sans-serif">Glen Park</text>
+	  <text voffset="15" 
+		hoffset="120" 
+		style="color:blue;font-weight:bold;font-family:sans-serif">12 St Oakland</text>
+	  <text voffset="15" 
+		hoffset="265" 
+		style="color:blue;font-weight:bold;font-family:sans-serif">Ashby</text>
+	  <frame style="background:yellow" width="150" height="30" hoffset="15" voffset="20">
+	    <text voffset="10" 
+		  hoffset="12" 
+		  style="color:blue;font-weight:bold;font-family:sans-serif">Pittsburg/Bay Point »</text>
+	  </frame>
+	  <frame style="background:orange" width="150" height="30" hoffset="150" voffset="20">
+	    <text voffset="10" 
+		  hoffset="17" 
+		  style="color:blue;font-weight:bold;font-family:sans-serif">Richmond  »</text>
+	  </frame>
+	</frame>
+
+	<frame style="background:#ced" width="310" height="100" voffset="150">
+	  <text voffset="15" 
+		hoffset="5" 
+		style="color:blue;font-weight:bold;font-family:sans-serif">Glen Park</text>
+	  <text voffset="15" 
+		hoffset="120" 
+		style="color:blue;font-weight:bold;font-family:sans-serif">12 St Oakland</text>
+	  <text voffset="15" 
+		hoffset="265" 
+		style="color:blue;font-weight:bold;font-family:sans-serif">Ashby</text>
+	  <frame style="background:yellow" width="150" height="15" hoffset="15" voffset="20">
+	    <text voffset="10" 
+		  hoffset="17" 
+		  style="color:blue;font-weight:bold;font-family:sans-serif">Richmond  »</text>
+	  </frame>
+	  <frame style="background:red" width="150" height="15" hoffset="150" voffset="20">
+	    <text voffset="10" 
+		  hoffset="17" 
+		  style="color:blue;font-weight:bold;font-family:sans-serif">Richmond  »</text>
+	  </frame>
 	</frame>
 
 	<frame 
