@@ -597,6 +597,16 @@ so it probably is not needed.)
 	var bridge = bartWindow.getElementById("bridge"+i);
 	bridge.style.background = ab_train_color;
 
+	var bridge_b;
+
+	bridge_b = bartWindow.getElementById("trip_"+i+"_leg_1");
+	bridge_b.style.background = ab_train_color;
+	bridge_b.style.background = ab_train_color;
+
+	bridge_b = bartWindow.getElementById("trip_"+i+"_leg_2");
+	bridge_b.style.background = cd_train_color;
+	bridge_b.style.background = cd_train_color;
+
 	if (top_bound_to1 == 'SF Airport') {
 	    top_bound_to1 = "SFO/Millbrae";
 	}

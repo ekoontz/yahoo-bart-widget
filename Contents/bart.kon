@@ -25,48 +25,48 @@
 
   <window name="bartWindow" title="Bart Tracker" visible="1">
     <title>BART Widget</title>
-      <frame style="background:white" width="450" height="210" voffset="0"
+      <frame style="background:#aef" width="495" height="210" voffset="0"
 	     style="font-weight:bold;font-family:sans-serif;">
 
-	<frame style="background:#aef" width="115" height="100" voffset="100">
+	<frame style="background:#0ef" width="115" height="100" voffset="100" hoffset="375">
 	  <text voffset="18"
 		hoffset="5"
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta1_1">
-			   8 min
+			   [b_eta1_1]
 	  </text>
 
 	  <text voffset="38"
 		hoffset="5"
 		size="14"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
-		id="b_eta1_2">
-			   20 min, 32 min
+		id="b_eta1_rest">
+			   [b_eta1_rest]
 	  </text>
 
 	</frame>
 
-	<frame style="background:#aef" width="115" height="100" voffset="160">
+	<frame style="background:#0ef" width="115" height="100" voffset="160" hoffset="375">
 	  <text voffset="15"
 		hoffset="5"
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta2_1">
-			   3 min
+			   [b_eta2_1]
 	  </text>
 
 	  <text voffset="38"
 		hoffset="5"
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
-		id="b_eta2_2">
-			   12 min
+		id="b_eta2_rest">
+			   [b_eta2_rest]
 	  </text>
 
 	</frame>
 
-	<frame style="background:#ced" width="425" height="100" hoffset="115" voffset="100">
+	<frame style="background:#aef" width="375" height="100" hoffset="0" voffset="100">
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station1"
@@ -79,13 +79,15 @@
 		hoffset="235" 
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">[b_final_destination1]</text>
-	  <frame style="background:yellow" width="150" height="30" hoffset="15" voffset="20">
+	  <frame id="trip_1_leg_1" 
+		 width="150" height="30" hoffset="15" voffset="20">
 	    <text voffset="10" 
 		  hoffset="12" 
 		  id="b_line_1_1"
 		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_1_1] »</text>
 	  </frame>
-	  <frame style="background:orange" width="150" height="30" hoffset="150" voffset="20">
+	  <frame id="trip_1_leg_2" 
+		 width="150" height="30" hoffset="150" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_1_2"
@@ -93,7 +95,7 @@
 	  </frame>
 	</frame>
 
-	<frame style="background:#ced" width="425" height="100" hoffset="115" voffset="150">
+	<frame width="375" height="100" hoffset="0" voffset="150">
 	  <text voffset="15" 
 		hoffset="5" 
 		style="color:blue;font-weight:bold;font-family:sans-serif">[starting_station2]</text>
@@ -103,13 +105,15 @@
 	  <text voffset="15" 
 		hoffset="230" 
 		style="color:blue;font-weight:bold;font-family:sans-serif">[b_final_destination2]</text>
-	  <frame style="background:yellow" width="135" height="30" hoffset="15" voffset="20">
+	  <frame id="trip_2_leg_1"
+		 width="135" height="30" hoffset="15" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
-		  id="b_line_1_2"
+		  id="b_line_2_1"
 		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_2_1] »</text>
 	  </frame>
-	  <frame style="background:red" width="150" height="30" hoffset="150" voffset="20">
+	  <frame id="trip_2_leg_2"
+		 width="150" height="30" hoffset="150" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_2_2"
