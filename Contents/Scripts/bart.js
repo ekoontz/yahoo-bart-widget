@@ -577,14 +577,28 @@ so it probably is not needed.)
 	}
 	else {
 	    log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
-    }
+	}
 	
+	var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
+	b_line_1.data = top_bound_to1;
+
+	var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
+	b_line_2.data = top_bound_to2;
+
 	var from_station = bartWindow.getElementById("from_station");
 	from_station.data = top_from_station;
-	
+	var b_from_station = bartWindow.getElementById("b_starting_station"+i);
+	b_from_station.data = top_from_station;
+
 	var to_station = bartWindow.getElementById("to_station");
 	to_station.data = top_final_destination;
+	var b_to_station = bartWindow.getElementById("b_final_destination"+i);
+	b_to_station.data = top_final_destination;
 	
+	var b_transfer = bartWindow.getElementById("b_transfer_point"+i);
+	b_transfer.data = top_transfer_at;
+
+
 	var message;
 	if (top_bound_to2 != null) {
 	    message = top_bound_to1;

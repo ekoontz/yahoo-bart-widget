@@ -70,24 +70,24 @@
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station1"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[starting_station1]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">[b_starting_station1]</text>
 	  <text voffset="15" 
-		hoffset="120" 
+		hoffset="115" 
 		id="b_transfer_point1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">[b_transfer_point1]</text>
 	  <text voffset="15" 
-		hoffset="235" 
+		hoffset="320" 
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">[b_final_destination1]</text>
 	  <frame id="trip_1_leg_1" 
-		 width="150" height="30" hoffset="15" voffset="20">
+		 width="200" height="30" hoffset="15" voffset="20">
 	    <text voffset="10" 
 		  hoffset="12" 
 		  id="b_line_1_1"
 		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_1_1] »</text>
 	  </frame>
 	  <frame id="trip_1_leg_2" 
-		 width="150" height="30" hoffset="150" voffset="20">
+		 width="200" height="30" hoffset="215" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_1_2"
@@ -98,22 +98,25 @@
 	<frame width="375" height="100" hoffset="0" voffset="150">
 	  <text voffset="15" 
 		hoffset="5" 
-		style="color:blue;font-weight:bold;font-family:sans-serif">[starting_station2]</text>
+		id="b_starting_station2"
+		style="color:blue;font-weight:bold;font-family:sans-serif">[b_starting_station2]</text>
 	  <text voffset="15" 
 		hoffset="120" 
+		id="b_transfer_point2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">[b_transfer_point2]</text>
 	  <text voffset="15" 
-		hoffset="230" 
+		hoffset="320" 
+		id="b_final_destination2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">[b_final_destination2]</text>
 	  <frame id="trip_2_leg_1"
-		 width="135" height="30" hoffset="15" voffset="20">
+		 width="200" height="30" hoffset="15" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_2_1"
 		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_2_1] »</text>
 	  </frame>
 	  <frame id="trip_2_leg_2"
-		 width="150" height="30" hoffset="150" voffset="20">
+		 width="200" height="30" hoffset="215" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_2_2"
