@@ -394,6 +394,8 @@ function initDB() {
 	    log("error: could not insert d_before:" + e);
 	}
 
+	log("iteration: " + iteration + " : " + existing_count + " / " + new_count);
+
     } while (existing_count < new_count);
 
     log("done with recursive case d_before()");
@@ -580,10 +582,10 @@ so it probably is not needed.)
 	}
 	
 	var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
-	b_line_1.data = top_bound_to1;
+	b_line_1.data = top_bound_to1 + "->";
 
 	var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
-	b_line_2.data = top_bound_to2;
+	b_line_2.data = top_bound_to2 + "->";
 
 	var from_station = bartWindow.getElementById("from_station");
 	from_station.data = top_from_station;
@@ -615,10 +617,8 @@ so it probably is not needed.)
 
 	bridge_b = bartWindow.getElementById("trip_"+i+"_leg_1");
 	bridge_b.style.background = ab_train_color;
-	bridge_b.style.background = ab_train_color;
 
 	bridge_b = bartWindow.getElementById("trip_"+i+"_leg_2");
-	bridge_b.style.background = cd_train_color;
 	bridge_b.style.background = cd_train_color;
 
 	if (top_bound_to1 == 'SF Airport') {
