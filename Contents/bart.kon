@@ -10,6 +10,7 @@
   </action>
 
   <action trigger="onLoad">
+    initDB();
     reload_etas();
   </action>
 
@@ -81,14 +82,14 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <frame id="trip_1_leg_1" 
 		 width="200" height="30" hoffset="15" voffset="20">
-	    <text voffset="10" 
+	    <text voffset="20" 
 		  hoffset="12" 
 		  id="b_line_1_1"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_1_leg_2" 
 		 width="200" height="30" hoffset="215" voffset="20">
-	    <text voffset="10" 
+	    <text voffset="20" 
 		  hoffset="17" 
 		  id="b_line_1_2"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
@@ -110,14 +111,14 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <frame id="trip_2_leg_1"
 		 width="200" height="30" hoffset="15" voffset="20">
-	    <text voffset="10" 
+	    <text voffset="20" 
 		  hoffset="17" 
 		  id="b_line_2_1"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_2_leg_2"
 		 width="200" height="30" hoffset="215" voffset="20">
-	    <text voffset="10" 
+	    <text voffset="20" 
 		  hoffset="17" 
 		  id="b_line_2_2"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
