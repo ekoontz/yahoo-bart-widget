@@ -25,10 +25,10 @@
 
   <window name="bartWindow" title="Bart Tracker" visible="1">
     <title>BART Widget</title>
-      <frame style="background:#aef" width="495" height="210" voffset="0"
+      <frame style="background:#aef" width="495" height="110" voffset="0"
 	     style="font-weight:bold;font-family:sans-serif;">
 
-	<frame style="background:#0ef" width="115" height="100" voffset="100" hoffset="375">
+	<frame style="background:#0ef" width="120" height="100" voffset="0" hoffset="375">
 	  <text voffset="18"
 		hoffset="5"
 		size="18"
@@ -47,7 +47,7 @@
 
 	</frame>
 
-	<frame style="background:#0ef" width="115" height="100" voffset="160" hoffset="375">
+	<frame style="background:#0ef" width="115" height="100" voffset="60" hoffset="375">
 	  <text voffset="15"
 		hoffset="5"
 		size="18"
@@ -58,7 +58,7 @@
 
 	  <text voffset="38"
 		hoffset="5"
-		size="18"
+		size="14"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta2_rest">
 			   [b_eta2_rest]
@@ -66,7 +66,7 @@
 
 	</frame>
 
-	<frame style="background:#aef" width="375" height="100" hoffset="0" voffset="100">
+	<frame style="background:#aef" width="375" height="100" hoffset="0" voffset="0">
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station1"
@@ -95,7 +95,7 @@
 	  </frame>
 	</frame>
 
-	<frame width="375" height="100" hoffset="0" voffset="150">
+	<frame width="375" height="100" hoffset="0" voffset="50">
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station2"
@@ -122,44 +122,6 @@
 		  id="b_line_2_2"
 		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_2_2] »</text>
 	  </frame>
-	</frame>
-
-	<frame 
-	       width="80" height="100"
-	       voffset="0">
-	  <image
-	     opacity="90%"
-	     src="Resources/Dock/Icon.png"
-	     hOffset="28"
-	     hAlign="center"/>
-
-	  <text width="75" style="text-align:center;color:white" voffset="50" id="from_station">
-
-	  </text>
-	</frame>
-
-	<frame id="bridge1" style="background:transparent;"
-	       width="156" height="28" hoffset="80"
-	       voffset="0">
-	  <text voffset="12" hoffset="5" id="details1">
-
-	  </text>
-	  <text voffset="25" hoffset="5" id="estimate1">
-
-	  </text>
-	</frame>
-
-	<frame id="transfer1"
-	       width="156" height="25" hoffset="80"
-	       voffset="28">
-	  <text voffset="7" hoffset="1" id="transfer_textbox1" size="9">
-	  </text>
-
-	  <text voffset="17" hoffset="1" id="transfer_destination_textbox1" size="9">
-
-	  </text>
-
-
 	</frame>
 
 	<frame id="destination1"
@@ -193,21 +155,6 @@
 
 	</frame>
 
-	<frame 
-	       height="20" hoffset="235"
-	       width="75" height="100"
-	       voffset="0">
-
-	  <image
-	     opacity="90%"
-	     src="Resources/Dock/Iconflipped.png"
-	     hOffset="50" vOffset="0"
-	     hAlign="center"/>
-
-	  <text width="75" style="text-align:center;color:white" voffset="50" id="to_station">
-
-	  </text>
-	</frame>
 
       </frame>
 

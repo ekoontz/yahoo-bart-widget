@@ -587,19 +587,14 @@ so it probably is not needed.)
 	var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
 	b_line_2.data = top_bound_to2 + " ->";
 
-	var from_station = bartWindow.getElementById("from_station");
-	from_station.data = top_from_station;
 	var b_from_station = bartWindow.getElementById("b_starting_station"+i);
 	b_from_station.data = top_from_station;
 
-	var to_station = bartWindow.getElementById("to_station");
-	to_station.data = top_final_destination;
 	var b_to_station = bartWindow.getElementById("b_final_destination"+i);
 	b_to_station.data = top_final_destination;
 	
 	var b_transfer = bartWindow.getElementById("b_transfer_point"+i);
 	b_transfer.data = top_transfer_at;
-
 
 	var message;
 	if (top_bound_to2 != null) {
@@ -608,10 +603,6 @@ so it probably is not needed.)
 	else {
 	    message = top_bound_to1;
 	}
-	var details = bartWindow.getElementById("details"+i);
-	details.data = message;
-	var bridge = bartWindow.getElementById("bridge"+i);
-	bridge.style.background = ab_train_color;
 
 	var bridge_b;
 
@@ -629,25 +620,10 @@ so it probably is not needed.)
 	log("looking for estimate: " + xpath1);
 	estimate = bartEtaDoc.evaluate(xpath1);
 	
-	var estimate_textbox = bartWindow.getElementById("estimate"+i);
-	estimate_textbox.data = estimate;
-
 	var estimate_textbox = bartWindow.getElementById("b_eta"+i);
 	estimate_textbox.data = estimate;
 
-	var transfer = bartWindow.getElementById("transfer"+i);
-	transfer.style.background = cd_train_color;
-
-	var transfer_textbox = bartWindow.getElementById("transfer_textbox"+i);
-	transfer_textbox.style.background = cd_train_color;
-
-	transfer_textbox.data = "";
-
 	if (top_transfer_at != top_final_destination) {
-	    transfer_textbox.data = "get off at " + top_transfer_at;
-
-	    var destination_textbox = bartWindow.getElementById("transfer_destination_textbox"+i);
-	    destination_textbox.data = " and take the " + top_bound_to2 + "-bound train.";
 
 	    if (top_bound_to2 != null) {
 		bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
