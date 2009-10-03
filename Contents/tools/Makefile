@@ -1,12 +1,19 @@
-.PHONY:lines
+.PHONY:lines clean run
+
+all: adjacent.sql lines.sql
 
 adjacent.sql:
 	echo "DELETE FROM adjacent;" > $@
-	perl csv2sql.pl ../../google_transit/stop_times.txt | sort | uniq  >> $@
+	perl csv2sql.pl stop_times.txt | sort | uniq  >> $@
+
+clean:
+	-rm *.sql 
+
+run: lines.sql
+	echo "DELETE FROM line;" | bartdb
+	cat $< > $@
 
 lines.sql: blue.sql green.sql red.sql orange.sql  yellow.sql 
-	echo "DELETE FROM line;" | bartdb
-	cat $^ > $@
 
 blue.sql:
 	 cat blue.txt | ./lines.pl  blue > $@
