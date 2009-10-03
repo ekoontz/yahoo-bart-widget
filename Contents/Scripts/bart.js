@@ -1,7 +1,3 @@
-
-table_data_frame = bartWindow.getElementById("barttable");
-
-var vOffset = 0;
 var db;
 
 var online = true;
@@ -29,7 +25,6 @@ function initDB() {
 	"tools/red.sql",
 	"tools/yellow.sql"
     );
-
 
     for (var i = 0; i < files.length; i++) {
 
