@@ -7,9 +7,9 @@ adjacent.sql:
 	perl csv2sql.pl stop_times.txt | sort | uniq  >> $@
 
 clean:
-	-rm *.sql 
+	-rm lines.sql adjacent.sql blue.sql green.sql orange.sql red.sql yelllow.sql
 
-run: lines.sql
+run: adjacent.sql lines.sql
 	echo "DELETE FROM line;" | bartdb
 	cat $< > $@
 
