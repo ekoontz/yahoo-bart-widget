@@ -9,35 +9,6 @@ var online = true;
 var bartEtaDoc;
 
 function initDB() {
-
-    try {
-	if (online == true) {
-	    log("loading remote 'bart_eta.xml'");
-	    var request = new XMLHttpRequest();
-	    request.open("GET","http://www.bart.gov/dev/eta/bart_eta.xml",false);
-	    request.send();
-
-	    if (request.status == 200) {
-		bartEtaDoc = XMLDOM.parse(request.responseXML.toXML());			
-	    }
-	    else {
-		log("could not retrieve response from http://www.bart.gov.");
-	    }
-
-	}
-	else {
-	    log("reading local 'bart_eta.xml' from : " + system.widgetDataFolder + "/bart_eta.xml");
-//	    bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
-	    bartEtaDoc = XMLDOM.parse( filesystem.readFile(system.widgetDataFolder + "/bart_eta.xml"));
-	    log("..done.");
-	}
-	log("..ok.");
-    }
-    catch(e) {
-	log("exception reading bart_eta.xml: " + e);
-	throw(e);
-    }
-
     try {
 	log("opening bart database from file: " + system.widgetDataFolder + "/bart.db");
 	db = new SQLite( );
@@ -80,7 +51,39 @@ function initDB() {
 }
     
     function reloadDB() {
-	log("<reloadDB()>");
+
+	// <get up-to-date BART eta info from bart.gov.>
+	try {
+	    if (online == true) {
+		log("loading remote 'bart_eta.xml'");
+		var request = new XMLHttpRequest();
+		request.open("GET","http://www.bart.gov/dev/eta/bart_eta.xml",false);
+		request.send();
+		
+		if (request.status == 200) {
+		    bartEtaDoc = XMLDOM.parse(request.responseXML.toXML());			
+		}
+		else {
+		    log("could not retrieve response from http://www.bart.gov.");
+		}
+		
+	    }
+	    else {
+		log("reading local 'bart_eta.xml' from : " + system.widgetDataFolder + "/bart_eta.xml");
+		//	    bartEtaDoc = XMLDOM.parse( filesystem.readFile( "bart_eta.xml" ) );
+		bartEtaDoc = XMLDOM.parse( filesystem.readFile(system.widgetDataFolder + "/bart_eta.xml"));
+		log("..done.");
+	    }
+	    log("..ok.");
+	}
+	catch(e) {
+	    log("exception reading bart_eta.xml: " + e);
+	    throw(e);
+	}
+	// </get up-to-date BART eta info from bart.gov.>
+
+	// the rest of this function populates
+	// local database with BART eta info
 	try {
 	    db.open( system.widgetDataFolder + "/bart.db" );
 	}
@@ -89,7 +92,6 @@ function initDB() {
 	    throw(e);
 	}
 
-	log("db: " + db);
 	/* Definitions: 
            1. Connection(A,B,D)
            station A is connected to station B 
@@ -693,27 +695,35 @@ so it probably is not needed.)
 	    bridge_b.style.background = cd_train_color;
 	    
 	    var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
-	    log("looking for estimate: " + xpath1);
+
+	    log("XPATH1: " + xpath1);
+
 	    estimate = bartEtaDoc.evaluate(xpath1);
+
+	    log("got estimate1: " + estimate);
 	    
 	    var estimate_textbox = bartWindow.getElementById("b_eta"+i);
 	    estimate_textbox.data = estimate;
 	    
+	    // <get eta from transfer station to final destination.>
+	    // not currently used to display anywhere.
 	    if (top_transfer_at != top_final_destination) {
+
+
 		
 		if (top_bound_to2 != null) {
-		    bart_row = new bartStationMessage("Get off at: " + top_transfer_at + ".");
-		    bart_row = new bartStationMessage("Then, take the " + top_bound_to2 + " train.");
-		    
 		    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+
+		    log("XPATH2: " + xpath2);
+
 		    estimate = bartEtaDoc.evaluate(xpath2);
-		    bart_row = new bartStationMessage("(" + estimate + ")");
+
+		    log("got estimate2: " + estimate);
+
 		}
 	    }
+	    // </get eta from transfer station to final destination.>
 	}
-	
-	
-	bart_row = new bartStationMessage("and get off at: " + top_final_destination + ".");
 	
 	find_result.dispose();
 	try {
@@ -728,28 +738,3 @@ so it probably is not needed.)
 	alert("By Eugene Koontz (ekoontz@hiro-tan.org)");
     }
     
-    function bartStationMessage( text ) {
-    var obj = new Frame( );
-    
-    obj.symbol = null;
-    obj.fullName = null;
-    obj.change = 0;
-    obj.changePercent = 0;
-
-    obj.width = 350;
-    obj.height = 28;
-    obj.hOffset = 2;
-    obj.vOffset = vOffset;
-    vOffset += 15; // increment global
-    obj.text = new Text( );
-    obj.text.style.fontFamily = "sans-serif";
-    obj.text.style.fontSize = "14px";
-    obj.text.style.fontWeight = "bold";
-    obj.text.hOffset = 4;
-    obj.text.vOffset = 16;
-    obj.text.data = text;
-    obj.appendChild( obj.text );
-
-    return obj;
-}
-
