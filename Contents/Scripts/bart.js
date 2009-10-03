@@ -565,6 +565,13 @@ so it probably is not needed.)
     for(var i = 1; i < 3; i++) {
 	var top_row = find_result.getRow();
 	var top_from_station;
+
+	if (!top_row) {
+	    log("no routes found: BART is not running at this time.");
+	    break;
+	}
+
+
 	top_from_station = top_row['from_station'];
 	
 	var top_bound_to1 = top_row['bound_to1'];
