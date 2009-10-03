@@ -697,14 +697,26 @@ so it probably is not needed.)
 
 	    log("got estimate1: " + estimate);
 	    
+	    var first = estimate.replace(/,.*/,"");
+	    var others = estimate.replace(/^[^,]+,/,"");
+
+	    if (others == estimate) {
+		// in this case, there is only one train (no commas).
+		others = "";
+	    }
+
+	    log("got estimate1 (first): " + first);
+	    log("got estimate1 (others): " + others);
+
 	    var estimate_textbox = bartWindow.getElementById("b_eta"+i);
-	    estimate_textbox.data = estimate;
+	    estimate_textbox.data = first;
+
+	    estimate_textbox = bartWindow.getElementById("b_eta"+i+"_rest");
+	    estimate_textbox.data = others;
 	    
 	    // <get eta from transfer station to final destination.>
-	    // not currently used to display anywhere.
+	    // (this is not currently displayed anywhere)
 	    if (top_transfer_at != top_final_destination) {
-
-
 		
 		if (top_bound_to2 != null) {
 		    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
