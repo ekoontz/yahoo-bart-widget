@@ -46,10 +46,9 @@ function initDB() {
 }
     
     function reloadDB() {
-
+	status_timer.ticking = false;
 	var status = bartWindow.getElementById("status");
 	status.data = "updating BART info..";
-
 	countdown_to_update = 120;
 
 	// <get up-to-date BART eta info from bart.gov.>
@@ -439,7 +438,7 @@ function initDB() {
 	log("</reloadDB()>");
 
 	status.data = "updated.";
-
+	status_timer.ticking = true;
 }
 
     function update_etas() {
