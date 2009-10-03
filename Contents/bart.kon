@@ -31,7 +31,7 @@
 	<frame style="background:#0ef" width="120" height="100" voffset="0" hoffset="375">
 	  <text voffset="18"
 		hoffset="5"
-		size="18"
+		size="20"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta1">
 	    --
@@ -50,7 +50,7 @@
 	<frame style="background:#0ef" width="115" height="100" voffset="60" hoffset="375">
 	  <text voffset="15"
 		hoffset="5"
-		size="18"
+		size="20"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta2">
 	    --
