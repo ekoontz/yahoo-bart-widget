@@ -582,10 +582,10 @@ so it probably is not needed.)
 	}
 	
 	var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
-	b_line_1.data = top_bound_to1 + "->";
+	b_line_1.data = top_bound_to1 + " ->";
 
 	var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
-	b_line_2.data = top_bound_to2 + "->";
+	b_line_2.data = top_bound_to2 + " ->";
 
 	var from_station = bartWindow.getElementById("from_station");
 	from_station.data = top_from_station;
@@ -630,6 +630,9 @@ so it probably is not needed.)
 	estimate = bartEtaDoc.evaluate(xpath1);
 	
 	var estimate_textbox = bartWindow.getElementById("estimate"+i);
+	estimate_textbox.data = estimate;
+
+	var estimate_textbox = bartWindow.getElementById("b_eta"+i);
 	estimate_textbox.data = estimate;
 
 	var transfer = bartWindow.getElementById("transfer"+i);

@@ -33,8 +33,8 @@
 		hoffset="5"
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
-		id="b_eta1_1">
-			   [b_eta1_1]
+		id="b_eta1">
+			   [b_eta1]
 	  </text>
 
 	  <text voffset="38"
@@ -52,8 +52,8 @@
 		hoffset="5"
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
-		id="b_eta2_1">
-			   [b_eta2_1]
+		id="b_eta2">
+			   [b_eta2]
 	  </text>
 
 	  <text voffset="38"
