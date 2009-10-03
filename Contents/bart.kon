@@ -34,7 +34,7 @@
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta1">
-			   [b_eta1]
+	    --
 	  </text>
 
 	  <text voffset="38"
@@ -42,7 +42,7 @@
 		size="14"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta1_rest">
-			   [b_eta1_rest]
+	    --
 	  </text>
 
 	</frame>
@@ -53,7 +53,7 @@
 		size="18"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta2">
-			   [b_eta2]
+	    --
 	  </text>
 
 	  <text voffset="38"
@@ -61,7 +61,7 @@
 		size="14"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
 		id="b_eta2_rest">
-			   [b_eta2_rest]
+	    --
 	  </text>
 
 	</frame>
@@ -70,28 +70,28 @@
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station1"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[b_starting_station1]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="15" 
 		hoffset="115" 
 		id="b_transfer_point1"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[b_transfer_point1]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="15" 
 		hoffset="320" 
 		id="b_final_destination1"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[b_final_destination1]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <frame id="trip_1_leg_1" 
 		 width="200" height="30" hoffset="15" voffset="20">
 	    <text voffset="10" 
 		  hoffset="12" 
 		  id="b_line_1_1"
-		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_1_1] »</text>
+		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_1_leg_2" 
 		 width="200" height="30" hoffset="215" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_1_2"
-		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_1_2] »</text>
+		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	</frame>
 
@@ -99,28 +99,28 @@
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station2"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[b_starting_station2]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="15" 
 		hoffset="120" 
 		id="b_transfer_point2"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[b_transfer_point2]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="15" 
 		hoffset="320" 
 		id="b_final_destination2"
-		style="color:blue;font-weight:bold;font-family:sans-serif">[b_final_destination2]</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <frame id="trip_2_leg_1"
 		 width="200" height="30" hoffset="15" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_2_1"
-		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_2_1] »</text>
+		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_2_leg_2"
 		 width="200" height="30" hoffset="215" voffset="20">
 	    <text voffset="10" 
 		  hoffset="17" 
 		  id="b_line_2_2"
-		  style="color:blue;font-weight:bold;font-family:sans-serif">[b_line_2_2] »</text>
+		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	</frame>
 

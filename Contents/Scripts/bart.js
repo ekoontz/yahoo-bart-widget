@@ -582,10 +582,20 @@ so it probably is not needed.)
 	}
 	
 	var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
-	b_line_1.data = top_bound_to1 + " ->";
-
+	if (top_bound_to1) {
+	    b_line_1.data = top_bound_to1 + " ->";
+	}
+	else {
+	    b_line_1.data = "";
+	}
+	
 	var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
-	b_line_2.data = top_bound_to2 + " ->";
+	if (top_bound_to2) {
+	    b_line_2.data = top_bound_to2 + " ->";
+	}
+	else {
+	    b_line_2.data = "";
+	}
 
 	var b_from_station = bartWindow.getElementById("b_starting_station"+i);
 	b_from_station.data = top_from_station;
@@ -594,7 +604,12 @@ so it probably is not needed.)
 	b_to_station.data = top_final_destination;
 	
 	var b_transfer = bartWindow.getElementById("b_transfer_point"+i);
-	b_transfer.data = top_transfer_at;
+	if (top_transfer_at != top_final_destination) {
+	    b_transfer.data = top_transfer_at;
+	}
+	else {
+	    b_transfer.data = "";
+	}
 
 	var message;
 	if (top_bound_to2 != null) {
