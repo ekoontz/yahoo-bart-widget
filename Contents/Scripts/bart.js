@@ -1,5 +1,5 @@
 var db;
-
+var coundown_to_update = 0;
 var online = true;
 //var online = false;
 var bartEtaDoc;
@@ -46,6 +46,11 @@ function initDB() {
 }
     
     function reloadDB() {
+
+	var status = bartWindow.getElementById("status");
+	status.data = "updating BART info..";
+
+	countdown_to_update = 120;
 
 	// <get up-to-date BART eta info from bart.gov.>
 	try {
@@ -433,6 +438,8 @@ function initDB() {
 
 	log("</reloadDB()>");
 
+	status.data = "updated.";
+
 }
 
     function update_etas() {
@@ -740,8 +747,18 @@ so it probably is not needed.)
     	    log("could not close db:" + e.errCode + ":" + e.errMsg);
 	}
     }
+
+    function update_status() {
+	var status = bartWindow.getElementById("status");
+	status.data = "update in : " + countdown_to_update + " secs.";
+
+	countdown_to_update = countdown_to_update - 1;
+
+	status_timer.reset();
+    }
     
     function about() {
 	alert("By Eugene Koontz (ekoontz@hiro-tan.org)");
     }
-    
+
+
