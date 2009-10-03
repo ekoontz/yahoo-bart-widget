@@ -691,12 +691,10 @@ so it probably is not needed.)
 	    
 	    var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
 
-	    log("XPATH1: " + xpath1);
+	    log("eta xpath: " + xpath1);
 
 	    estimate = bartEtaDoc.evaluate(xpath1);
 
-	    log("got estimate1: " + estimate);
-	    
 	    var first = estimate.replace(/,.*/,"");
 	    var others = estimate.replace(/^[^,]+,/,"");
 
@@ -705,8 +703,8 @@ so it probably is not needed.)
 		others = "";
 	    }
 
-	    log("got estimate1 (first): " + first);
-	    log("got estimate1 (others): " + others);
+	    log("eta (first): " + first);
+	    log("eta (others): " + others);
 
 	    var estimate_textbox = bartWindow.getElementById("b_eta"+i);
 	    estimate_textbox.data = first;
@@ -715,18 +713,13 @@ so it probably is not needed.)
 	    estimate_textbox.data = others;
 	    
 	    // <get eta from transfer station to final destination.>
-	    // (this is not currently displayed anywhere)
-	    if (top_transfer_at != top_final_destination) {
-		
-		if (top_bound_to2 != null) {
-		    var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
-
-		    log("XPATH2: " + xpath2);
-
-		    estimate = bartEtaDoc.evaluate(xpath2);
-
-		    log("got estimate2: " + estimate);
-
+	    // (this is not currently displayed anywhere, so disabled.)
+	    if (false) {
+		if (top_transfer_at != top_final_destination) {
+		    if (top_bound_to2 != null) {
+			var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+			estimate = bartEtaDoc.evaluate(xpath2);
+		    }
 		}
 	    }
 	    // </get eta from transfer station to final destination.>
