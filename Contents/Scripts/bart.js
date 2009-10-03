@@ -663,7 +663,14 @@ so it probably is not needed.)
 	    b_from_station.data = top_from_station;
 	    
 	    var b_to_station = bartWindow.getElementById("b_final_destination"+i);
-	    b_to_station.data = top_final_destination;
+	    var top_final_destination_firstword = top_final_destination.replace(/ .*/,"");
+
+	    b_to_station.data = top_final_destination_firstword;
+
+	    var b_to_station_overflow = bartWindow.getElementById("b_final_destination"+i+"_overflow");
+	    var top_final_destination_rest = top_final_destination.replace(/^[^ ]+/,"");
+	    if (top_final_destination_rest != top_final_destination) 
+		b_to_station_overflow.data = top_final_destination_rest;
 	    
 	    var b_transfer = bartWindow.getElementById("b_transfer_point"+i);
 	    if (top_transfer_at != top_final_destination) {

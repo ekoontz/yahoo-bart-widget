@@ -81,9 +81,9 @@
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="32" 
-		hoffset="310" 
+		hoffset="290" 
 		id="b_final_destination1_overflow"
-		style="color:blue;font-weight:bold;font-family:sans-serif">overflow</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <frame id="trip_1_leg_1" 
 		 width="200" height="30" hoffset="15" voffset="35">
@@ -116,9 +116,9 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 
 	  <text voffset="32" 
-		hoffset="310" 
+		hoffset="290" 
 		id="b_final_destination2_overflow"
-		style="color:blue;font-weight:bold;font-family:sans-serif">overflow</text>
+		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <frame id="trip_2_leg_1"
 		 width="200" height="30" hoffset="15" voffset="35">
