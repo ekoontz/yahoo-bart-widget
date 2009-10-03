@@ -29,8 +29,8 @@
       <frame style="background:#aef" width="495" height="150" voffset="0"
 	     style="font-weight:bold;font-family:sans-serif;">
 
-	<frame style="background:#0ef" width="120" height="100" voffset="10" hoffset="375">
-	  <text voffset="18"
+	<frame style="background:#0ef" width="120" height="60" voffset="5" hoffset="375">
+	  <text voffset="20"
 		hoffset="5"
 		size="20"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
@@ -38,7 +38,7 @@
 	    --
 	  </text>
 
-	  <text voffset="38"
+	  <text voffset="48"
 		hoffset="5"
 		size="14"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
@@ -48,8 +48,8 @@
 
 	</frame>
 
-	<frame style="background:#0ef" width="120" height="100" voffset="90" hoffset="375">
-	  <text voffset="15"
+	<frame style="background:#0ef" width="120" height="60" voffset="85" hoffset="375">
+	  <text voffset="20"
 		hoffset="5"
 		size="20"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
@@ -57,7 +57,7 @@
 	    --
 	  </text>
 
-	  <text voffset="38"
+	  <text voffset="48"
 		hoffset="5"
 		size="14"
 		style="color:black;font-weight:bold;font-family:sans-serif;"
@@ -86,14 +86,14 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <frame id="trip_1_leg_1" 
-		 width="200" height="30" hoffset="15" voffset="35">
+		 width="185" height="30" hoffset="15" voffset="35">
 	    <text voffset="20" 
 		  hoffset="12" 
 		  id="b_line_1_1"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_1_leg_2" 
-		 width="200" height="30" hoffset="215" voffset="35">
+		 width="200" height="30" hoffset="185" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17" 
 		  id="b_line_1_2"
@@ -121,14 +121,14 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <frame id="trip_2_leg_1"
-		 width="200" height="30" hoffset="15" voffset="35">
+		 width="185" height="30" hoffset="15" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17" 
 		  id="b_line_2_1"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_2_leg_2"
-		 width="200" height="30" hoffset="215" voffset="35">
+		 width="200" height="30" hoffset="185" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17" 
 		  id="b_line_2_2"
