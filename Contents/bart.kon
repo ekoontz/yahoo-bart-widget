@@ -55,7 +55,7 @@
 	     style="color:white;font-weight:bold;font-family:sans-serif;">--</text>
 	</frame>
 
-	<frame style="background:#0ef" width="115" height="60" voffset="85" hoffset="375">
+	<frame style="background:#0ef" width="115" height="60" voffset="86" hoffset="375">
 	  <text voffset="20"
 		hoffset="5"
 		size="20"
@@ -108,7 +108,7 @@
 	  </frame>
 	</frame>
 
-	<frame width="375" height="100" hoffset="0" voffset="80">
+	<frame width="375" height="100" hoffset="0" voffset="81">
 	  <text voffset="15" 
 		hoffset="5" 
 		id="b_starting_station2"
