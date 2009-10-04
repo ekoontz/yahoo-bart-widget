@@ -17,13 +17,13 @@ function initDB() {
     }
 
     var files = new Array(
-	"tools/schema.sql",
-	"tools/adjacent.sql",
-	"tools/blue.sql",
-	"tools/green.sql",
-	"tools/orange.sql",
-	"tools/red.sql",
-	"tools/yellow.sql"
+	"Resources/schema.sql",
+	"Resources/adjacent.sql",
+	"Resources/blue.sql",
+	"Resources/green.sql",
+	"Resources/orange.sql",
+	"Resources/red.sql",
+	"Resources/yellow.sql"
     );
 
     for (var i = 0; i < files.length; i++) {
