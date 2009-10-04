@@ -467,6 +467,11 @@ function initDB() {
 	
 	// remove old messages from barttable.
 	
+	from_station = from_station.replace(/\'/g,'\'\'');
+	if (from_station == "San Francisco Int''l Airport") {
+	    from_station = "SF Airport";
+	}
+
 	to_station = to_station.replace(/\'/g,'\'\'');
 	if (to_station == "San Francisco Int''l Airport") {
 	    to_station = "SF Airport";
@@ -726,8 +731,11 @@ so it probably is not needed.)
 
 	    bridge_b = bartWindow.getElementById("trip_"+i+"_leg_2");
 	    bridge_b.style.background = cd_train_color;
-	    
-	    var xpath1 = "string(/root/station[name='"+top_from_station+"']/eta[destination='"+top_bound_to1+"']/estimate)";
+
+	    var online_station_name = db2online_station_name(top_from_station);
+	    log("online_station_name("+top_from_station + ") -> " + online_station_name);
+
+	    var xpath1 = "string(/root/station[name=\""+online_station_name+"\"]/eta[destination=\""+top_bound_to1+"\"]/estimate)";
 
 	    log("eta xpath: " + xpath1);
 
@@ -755,7 +763,7 @@ so it probably is not needed.)
 	    if (false) {
 		if (top_transfer_at != final_destination) {
 		    if (top_bound_to2 != null) {
-			var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
+			var xpath2 = "string(/root/station[name=\""+top_transfer_at+"\"]/eta[destination=\""+top_bound_to2+"\"]/estimate)";
 			estimate = bartEtaDoc.evaluate(xpath2);
 		    }
 		}
@@ -798,6 +806,13 @@ so it probably is not needed.)
 
 
 
+    }
+
+    function db2online_station_name(string) {
+	if (string == "SF Airport") {
+	    return "San Francisco Int'l Airport";
+	}
+	return string;
     }
     
     function about() {
