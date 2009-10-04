@@ -4,9 +4,9 @@
 	<version>1.0.2</version>
 	<identifier>org.hiro-tan.widget.bart</identifier>
 	<image usage="dock" src="Resources/Dock/Icon.png"/>
-	<author name="Eugene Koontz" organization="hiro-tan.org" href="http://hiro-tan.org"/>
+	<author name="Eugene Koontz" organization="hiro-tan.org" href="http://hiro-tan.org/~ekoontz"/>
 	<copyright>(c) Eugene Koontz</copyright>
-	<description>BART Tracker</description>
+	<description>BART Arrival Time Widget</description>
 	<platform minVersion="4.5" />
 	<security>
 		<http name="Yahoo!">yahoo.com</http>
