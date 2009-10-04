@@ -87,11 +87,11 @@
 		id="b_starting_station1_overflow"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
-	  <text voffset="15" 
-		hoffset="115" 
+	  <text voffset="30" 
+		hoffset="150" 
 		id="b_transfer_point1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
-	  <text voffset="30" 
+	  <text voffset="15" 
 		hoffset="115" 
 		id="b_transfer_point_eta1"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
@@ -139,12 +139,12 @@
 		id="b_starting_station2_overflow"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
-	  <text voffset="15" 
+	  <text voffset="30" 
 		hoffset="120" 
 		id="b_transfer_point2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 
-	  <text voffset="30" 
+	  <text voffset="15" 
 		hoffset="115" 
 		id="b_transfer_point_eta2"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
