@@ -222,9 +222,7 @@ function initDB() {
 	station = stations.item(i);
 	station_name = station.evaluate("name[1]/text()").item(0).nodeValue;
 	
-	if (station_name == "San Francisco Int'l Airport") {
-	    station_name = "SF Airport";
-	}
+	station_name = online2db_station_name(station_name);
 	
 	station_abbr = station.evaluate("abbr[1]/text()").item(0).nodeValue;
 	station_name = station_name.replace(/\'/g,'\'\'');
@@ -811,6 +809,13 @@ so it probably is not needed.)
     function db2online_station_name(string) {
 	if (string == "SF Airport") {
 	    return "San Francisco Int'l Airport";
+	}
+	return string;
+    }
+
+    function online2db_station_name(string) {
+	if (string == "San Francisco Int'l Airport") {
+	    return "SF Airport";
 	}
 	return string;
     }
