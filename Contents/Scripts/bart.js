@@ -431,6 +431,14 @@ function initDB() {
 
 	log("iteration: " + iteration + " : " + existing_count + " / " + new_count);
 
+	if (existing_count > 300) {
+	    log("too many d_before rows. terminating.");
+	    log("error : " + query_a);
+	    log("error : " + query_b);
+	    throw("too many d_before rows: terminating.");
+	}
+
+
     } while (existing_count < new_count);
 
     log("done with recursive case d_before()");

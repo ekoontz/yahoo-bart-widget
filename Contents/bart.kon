@@ -75,16 +75,18 @@
 	</frame>
 
 	<frame style="background:#aef" width="375" hoffset="0" voffset="0">
-	  <text voffset="15" 
+	  <text voffset="20" 
 		hoffset="5" 
+		size="18"
 		id="b_starting_station1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="15" 
 		hoffset="115" 
 		id="b_transfer_point1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
-	  <text voffset="15" 
-		hoffset="310" 
+	  <text voffset="20" 
+		hoffset="310"
+		size="16" 
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="32" 
@@ -95,6 +97,7 @@
 	  <frame id="trip_1_leg_1" 
 		 width="185" height="30" hoffset="15" voffset="35">
 	    <text voffset="20" 
+		  size="16"
 		  hoffset="12" 
 		  id="b_line_1_1"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
@@ -102,23 +105,26 @@
 	  <frame id="trip_1_leg_2" 
 		 width="200" height="30" hoffset="185" voffset="35">
 	    <text voffset="20" 
-		  hoffset="17" 
+		  hoffset="17"
+		  size="16" 
 		  id="b_line_1_2"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	</frame>
 
 	<frame width="375" height="100" hoffset="0" voffset="81">
-	  <text voffset="15" 
-		hoffset="5" 
+	  <text voffset="20" 
+		hoffset="5"
+		size="18" 
 		id="b_starting_station2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="15" 
 		hoffset="120" 
 		id="b_transfer_point2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
-	  <text voffset="15" 
+	  <text voffset="20" 
 		hoffset="310" 
+		size="16"
 		id="b_final_destination2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 
@@ -131,6 +137,7 @@
 		 width="185" height="30" hoffset="15" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17" 
+		  size="16"
 		  id="b_line_2_1"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
@@ -138,6 +145,7 @@
 		 width="200" height="30" hoffset="185" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17" 
+		  size="16"
 		  id="b_line_2_2"
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
