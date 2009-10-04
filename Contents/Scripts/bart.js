@@ -705,13 +705,19 @@ so it probably is not needed.)
 	    word_break = find_word_break(final_destination);
 	    b_to_station.data = final_destination.substring(0,word_break);
 	    b_to_station_overflow.data = final_destination.substring(word_break,final_destination.length);
+	    log("final destination: " + final_destination);
+	    log("word break found at : " + word_break);
+
 	    
 	    var b_transfer = bartWindow.getElementById("b_transfer_point"+i);
+	    var b_transfer_eta = bartWindow.getElementById("b_transfer_point_eta"+i);
 	    if (top_transfer_at != final_destination) {
 		b_transfer.data = top_transfer_at;
+		b_transfer_eta.data = "transfer at:";
 	    }
 	    else {
 		b_transfer.data = "";
+		b_transfer_eta.data = "";
 	    }
 	    
 	    var message;
@@ -780,7 +786,7 @@ so it probably is not needed.)
 
     function update_status() {
 	var status = bartWindow.getElementById("status");
-	status.data = "update in : " + countdown_to_update + " secs.";
+	status.data = "eta update in:" + countdown_to_update + " sec.";
 
 	countdown_to_update = countdown_to_update - 1;
 
@@ -802,7 +808,8 @@ so it probably is not needed.)
 	    i--;
 	}
 
-
+	// no space found: don't break word.
+	return string.length;
 
     }
 
