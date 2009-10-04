@@ -363,7 +363,7 @@ function initDB() {
 	    
 	var query_a = "" +
 "INSERT INTO d_before (from_station,final_destination,distance) \n"+
-"     SELECT adjacent.station_b,adj.final_destination,(adj.distance + 1)\n"+
+"     SELECT DISTINCT adjacent.station_b,adj.final_destination,(adj.distance + 1)\n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_a = adj.from_station)\n"+
@@ -396,7 +396,7 @@ function initDB() {
 
 	query_b = ""+
 "INSERT INTO d_before (from_station,final_destination,distance)  \n"+
-"     SELECT adjacent.station_a,adj.final_destination,adj.distance + 1\n"+
+"     SELECT DISTINCT adjacent.station_a,adj.final_destination,adj.distance + 1\n"+
 "       FROM adjacent  \n"+
 " INNER JOIN d_before adj \n"+
 "         ON (station_b = adj.from_station) \n"+
@@ -609,13 +609,16 @@ so it probably is not needed.)
 	//    log(find_q);
 
 	var find_result = db.query(find_q);
+
+	var last_transfer_at;
 	
+	// show only 2 results.
 	for(var i = 1; i < 3; i++) {
 	    var top_row = find_result.getRow();
 	    var top_from_station;
 	    
 	    if (!top_row) {
-		log("no more routes found.");
+		log("no more routes found (i="+i+")");
 		break;
 	    }
 	    
@@ -628,14 +631,29 @@ so it probably is not needed.)
 	    var top_final_destination = top_row['final_destination'];
 	    var ab_train_color = top_row['AB_color'];
 	    var cd_train_color = top_row['CD_color'];
-	    
+
 	    if (top_bound_to2 != null) {
 		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
 	    }
 	    else {
 		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
 	    }
+
+	    if (top_transfer_at == last_transfer_at) {
+		log("ignoring essentially same route...");
+
+		var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
+		b_line_1.data = "";
+
+		var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
+		b_line_2.data = "";
+
+		break;
+		
+	    }
 	    
+	    last_transfer_at = top_transfer_at;
+
 	    var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
 	    if (top_bound_to1) {
 		b_line_1.data = top_bound_to1 + " ->";
