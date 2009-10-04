@@ -102,7 +102,7 @@
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="32" 
-		hoffset="290"
+		hoffset="315"
 		size="10"  
 		id="b_final_destination1_overflow"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
@@ -156,7 +156,7 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 
 	  <text voffset="32" 
-		hoffset="290" 
+		hoffset="315" 
 		id="b_final_destination2_overflow"
 		size="10"  
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
