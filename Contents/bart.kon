@@ -48,11 +48,11 @@
 
 	</frame>
 
-	<frame style="background:green" width="115" height="13" voffset="69" hoffset="375">
+	<frame style="background:#0ef" width="115" height="13" voffset="69" hoffset="375">
 	  <text id="status"
 	     voffset="10" hoffset="5"
 	     size="10"
-	     style="color:white;font-weight:bold;font-family:sans-serif;">--</text>
+	     style="color:#000;font-weight:bold;font-family:sans-serif;">--</text>
 	</frame>
 
 	<frame style="background:#0ef" width="115" height="60" voffset="86" hoffset="375">
@@ -82,7 +82,7 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 
 	  <text voffset="32" 
-		hoffset="5"
+		hoffset="10"
 		size="10"  
 		id="b_starting_station1_overflow"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
@@ -134,7 +134,7 @@
 
 
 	  <text voffset="32" 
-		hoffset="5"
+		hoffset="10"
 		size="10"  
 		id="b_starting_station2_overflow"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
