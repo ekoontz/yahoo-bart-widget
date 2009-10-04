@@ -80,6 +80,13 @@
 		size="18"
 		id="b_starting_station1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
+
+	  <text voffset="32" 
+		hoffset="5"
+		size="10"  
+		id="b_starting_station1_overflow"
+		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
+
 	  <text voffset="15" 
 		hoffset="115" 
 		id="b_transfer_point1"
@@ -90,12 +97,13 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <text voffset="20" 
-		hoffset="310"
+		hoffset="290"
 		size="18" 
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="32" 
-		hoffset="290" 
+		hoffset="290"
+		size="10"  
 		id="b_final_destination1_overflow"
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
@@ -108,7 +116,7 @@
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_1_leg_2" 
-		 width="200" height="30" hoffset="185" voffset="35">
+		 width="185" height="30" hoffset="185" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17"
 		  size="16" 
@@ -123,6 +131,14 @@
 		size="18" 
 		id="b_starting_station2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
+
+
+	  <text voffset="32" 
+		hoffset="5"
+		size="10"  
+		id="b_starting_station2_overflow"
+		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
+
 	  <text voffset="15" 
 		hoffset="120" 
 		id="b_transfer_point2"
@@ -134,7 +150,7 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <text voffset="20" 
-		hoffset="310" 
+		hoffset="290" 
 		size="18"
 		id="b_final_destination2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
@@ -142,6 +158,7 @@
 	  <text voffset="32" 
 		hoffset="290" 
 		id="b_final_destination2_overflow"
+		size="10"  
 		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
 
 	  <frame id="trip_2_leg_1"
@@ -153,7 +170,7 @@
 		  style="color:white;font-weight:bold;font-family:sans-serif">--</text>
 	  </frame>
 	  <frame id="trip_2_leg_2"
-		 width="200" height="30" hoffset="185" voffset="35">
+		 width="185" height="30" hoffset="185" voffset="35">
 	    <text voffset="20" 
 		  hoffset="17" 
 		  size="16"

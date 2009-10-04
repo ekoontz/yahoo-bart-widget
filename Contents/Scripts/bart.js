@@ -628,15 +628,15 @@ so it probably is not needed.)
 	    var top_bound_to1 = top_row['bound_to1'];
 	    var top_transfer_at = top_row['transfer_at'];
 	    var top_bound_to2 = top_row['bound_to2'];
-	    var top_final_destination = top_row['final_destination'];
+	    var final_destination = top_row['final_destination'];
 	    var ab_train_color = top_row['AB_color'];
 	    var cd_train_color = top_row['CD_color'];
 
 	    if (top_bound_to2 != null) {
-		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + top_final_destination + ".");
+		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_transfer_at + ". Then, take the " + top_bound_to2 + "-bound train to " + final_destination + ".");
 	    }
 	    else {
-		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
+		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + final_destination + ".");
 	    }
 
 	    var bartFrame = bartWindow.getElementById("bartFrame");
@@ -650,13 +650,11 @@ so it probably is not needed.)
 		
 	    }
 
-
-	    
 	    last_transfer_at = top_transfer_at;
 
 	    var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
 	    if (top_bound_to1) {
-		b_line_1.data = top_bound_to1 + " ->";
+		b_line_1.data = top_bound_to1;
 	    }
 	    else {
 		b_line_1.data = "";
@@ -664,7 +662,7 @@ so it probably is not needed.)
 	    
 	    var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
 	    if (top_bound_to2) {
-		b_line_2.data = top_bound_to2 + " ->";
+		b_line_2.data = top_bound_to2;
 	    }
 	    else {
 		b_line_2.data = "";
@@ -690,22 +688,23 @@ so it probably is not needed.)
 		top_bound_to1 = "SFO/Millbrae";
 	    }
 
-
-	    var b_from_station = bartWindow.getElementById("b_starting_station"+i);
-	    b_from_station.data = top_from_station;
+	    var word_break;
 	    
+	    var b_from_station = bartWindow.getElementById("b_starting_station"+i);
+	    var b_from_station_overflow = bartWindow.getElementById("b_starting_station"+i+"_overflow");
+	    word_break = find_word_break(top_from_station);
+	    b_from_station.data = top_from_station.substring(0,word_break);
+	    b_from_station_overflow.data = top_from_station.substring(word_break,
+								      top_from_station.length);
+
 	    var b_to_station = bartWindow.getElementById("b_final_destination"+i);
-	    var top_final_destination_firstword = top_final_destination.replace(/ .*/,"");
-
-	    b_to_station.data = top_final_destination_firstword;
-
 	    var b_to_station_overflow = bartWindow.getElementById("b_final_destination"+i+"_overflow");
-	    var top_final_destination_rest = top_final_destination.replace(/^[^ ]+/,"");
-	    if (top_final_destination_rest != top_final_destination) 
-		b_to_station_overflow.data = top_final_destination_rest;
+	    word_break = find_word_break(final_destination);
+	    b_to_station.data = final_destination.substring(0,word_break);
+	    b_to_station_overflow.data = final_destination.substring(word_break,final_destination.length);
 	    
 	    var b_transfer = bartWindow.getElementById("b_transfer_point"+i);
-	    if (top_transfer_at != top_final_destination) {
+	    if (top_transfer_at != final_destination) {
 		b_transfer.data = top_transfer_at;
 	    }
 	    else {
@@ -754,7 +753,7 @@ so it probably is not needed.)
 	    // <get eta from transfer station to final destination.>
 	    // (this is not currently displayed anywhere, so disabled.)
 	    if (false) {
-		if (top_transfer_at != top_final_destination) {
+		if (top_transfer_at != final_destination) {
 		    if (top_bound_to2 != null) {
 			var xpath2 = "string(/root/station[name='"+top_transfer_at+"']/eta[destination='"+top_bound_to2+"']/estimate)";
 			estimate = bartEtaDoc.evaluate(xpath2);
@@ -780,6 +779,25 @@ so it probably is not needed.)
 	countdown_to_update = countdown_to_update - 1;
 
 	status_timer.reset();
+    }
+
+    // find the optimal place to break a string: look for the first space
+    // to the left of the midpoint of the string.
+    function find_word_break(string) {
+	var i = parseInt(string.length/2);
+
+	while (i > 0) {
+	    if (string[i] == ' ') {
+		return i;
+	    }
+	    if (string[i] == '/') {
+		return i;
+	    }
+	    i--;
+	}
+
+
+
     }
     
     function about() {
