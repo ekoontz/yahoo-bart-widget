@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <metadata>
 	<name>BART Tracker</name>
-	<version>1.0.2</version>
+	<version>1.0.0</version>
 	<identifier>org.hiro-tan.widget.bart</identifier>
 	<image usage="dock" src="Resources/Dock/Icon.png"/>
 	<author name="Eugene Koontz" organization="hiro-tan.org" href="http://hiro-tan.org/~ekoontz"/>
