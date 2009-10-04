@@ -86,7 +86,7 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="20" 
 		hoffset="310"
-		size="16" 
+		size="18" 
 		id="b_final_destination1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="32" 
@@ -124,7 +124,7 @@
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 	  <text voffset="20" 
 		hoffset="310" 
-		size="16"
+		size="18"
 		id="b_final_destination2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
 
