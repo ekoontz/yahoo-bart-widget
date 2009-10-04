@@ -639,18 +639,18 @@ so it probably is not needed.)
 		log("Leaving from " + top_from_station + ", take the " + top_bound_to1 + "-bound train and get off at " + top_final_destination + ".");
 	    }
 
+	    var bartFrame = bartWindow.getElementById("bartFrame");
+	    bartFrame.height=150;
+
 	    if (top_transfer_at == last_transfer_at) {
 		log("ignoring essentially same route...");
-
-		var b_line_1 = bartWindow.getElementById("b_line_"+i+"_1");
-		b_line_1.data = "";
-
-		var b_line_2 = bartWindow.getElementById("b_line_"+i+"_2");
-		b_line_2.data = "";
-
+		// hide bottom route since it's the same as the top route.
+		bartFrame.height=85;
 		break;
 		
 	    }
+
+
 	    
 	    last_transfer_at = top_transfer_at;
 

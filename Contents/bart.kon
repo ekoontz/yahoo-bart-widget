@@ -26,7 +26,7 @@
 
   <window name="bartWindow" title="Bart Tracker" visible="1">
     <title>BART Widget</title>
-      <frame style="background:#aef" width="495" height="150" voffset="0"
+      <frame id="bartFrame" style="background:#aef" width="495" height="150" voffset="0"
 	     style="font-weight:bold;font-family:sans-serif;">
 
 	<frame style="background:#0ef" width="115" height="60" voffset="5" hoffset="375">
@@ -84,6 +84,11 @@
 		hoffset="115" 
 		id="b_transfer_point1"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
+	  <text voffset="30" 
+		hoffset="115" 
+		id="b_transfer_point_eta1"
+		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
+
 	  <text voffset="20" 
 		hoffset="310"
 		size="18" 
@@ -122,6 +127,12 @@
 		hoffset="120" 
 		id="b_transfer_point2"
 		style="color:blue;font-weight:bold;font-family:sans-serif">--</text>
+
+	  <text voffset="30" 
+		hoffset="115" 
+		id="b_transfer_point_eta2"
+		style="color:blue;font-weight:bold;font-family:sans-serif"></text>
+
 	  <text voffset="20" 
 		hoffset="310" 
 		size="18"
