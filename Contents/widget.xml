@@ -9,7 +9,6 @@
 	<description>BART Arrival Time Widget</description>
 	<platform minVersion="4.5" />
 	<security>
-		<http name="Yahoo!">yahoo.com</http>
 		<http name="BART">bart.gov</http>
 		<filesystem>sandbox</filesystem>
 	</security>
