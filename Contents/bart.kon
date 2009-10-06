@@ -2,7 +2,7 @@
 <?konfabulator xml-strict="true"?>
 <widget minimumVersion="4.5">
   <settings>
-    <setting name="debug" value="off"/>
+    <setting name="debug" value="on"/>
   </settings>
 
   <action trigger="onPreferencesChanged">
@@ -311,62 +311,8 @@
     <option>West Oakland</option>
   </preference>
 
-<!-- About box -->
+  <!-- About box -->
   <about-box>
-    <image>Resources/About.png</image>
-    <about-version>
-      <font>Arial</font>
-      <size>10</size>
-      <hOffset>112</hOffset>
-      <vOffset>141</vOffset>
-      <color>#ffffff</color>
-      <shadow>
-        <color>#000000</color>
-        <hOffset>0</hOffset>
-        <vOffset>1</vOffset>
-      </shadow>
-    </about-version>
-    <about-text>
-      <data>Copyright Policy</data>
-      <url>http://hiro-tan.org</url>
-      <font>Arial</font>
-      <size>10</size>
-      <hOffset>112</hOffset>
-      <vOffset>191</vOffset>
-      <color>#ffffff</color>
-      <shadow>
-        <color>#000000</color>
-        <hOffset>0</hOffset>
-        <vOffset>1</vOffset>
-      </shadow>
-    </about-text>
-    <about-text>
-      <data>Terms Of Service</data>
-      <url>http://hiro-tan.org</url>
-      <font>Arial</font>
-      <size>10</size>
-      <hOffset>202</hOffset>
-      <vOffset>191</vOffset>
-      <color>#ffffff</color>
-      <shadow>
-        <color>#000000</color>
-        <hOffset>0</hOffset>
-        <vOffset>1</vOffset>
-      </shadow>
-    </about-text>
-    <about-text>
-      <data>Privacy Policy</data>
-      <url>http://hiro-tan.org</url>
-      <font>Arial</font>
-      <size>10</size>
-      <hOffset>299</hOffset>
-      <vOffset>191</vOffset>
-      <color>#ffffff</color>
-      <shadow>
-        <color>#000000</color>
-        <hOffset>0</hOffset>
-        <vOffset>1</vOffset>
-      </shadow>
-    </about-text>
+    <image>Resources/about.png</image>
   </about-box>
 </widget>
